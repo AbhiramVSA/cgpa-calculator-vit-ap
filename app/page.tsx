@@ -2,7 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -49,6 +50,7 @@ export default function CGPACalculator() {
   const [importedCgpa, setImportedCgpa] = useState<number | null>(null)
   const [importSuccess, setImportSuccess] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
+  const searchParams = useSearchParams()
 
   const calculateCGPA = (courseList: Course[]) => {
     const validCourses = courseList.filter((course) => course.grade !== "P")
@@ -138,8 +140,9 @@ export default function CGPACalculator() {
     setImportError(null)
   }
 
-  const handleAutomatedImport = async () => {
-    if (!encodedData.trim()) return
+  const handleAutomatedImport = async (value?: string) => {
+    const toProcess = (value ?? encodedData).trim()
+    if (!toProcess) return
 
     setIsLoading(true)
     setImportError(null)
@@ -147,7 +150,7 @@ export default function CGPACalculator() {
 
     try {
       // Get CGPA from API
-      const response = await fetch(`/api/calculate?data=${encodeURIComponent(encodedData)}`)
+      const response = await fetch(`/api/calculate?data=${encodeURIComponent(toProcess)}`)
       const result = await response.json()
 
       if (response.ok) {
@@ -155,7 +158,7 @@ export default function CGPACalculator() {
 
         // Decode and display course data
         try {
-          const decodedCourses = await decodeImportedData(encodedData)
+          const decodedCourses = await decodeImportedData(toProcess)
           const coursesWithIds: Course[] = decodedCourses.map((course, index) => ({
             id: `imported-${Date.now()}-${index}`,
             title: course.course_title,
@@ -184,6 +187,16 @@ export default function CGPACalculator() {
       addCourse()
     }
   }
+
+  // Auto-import if ?data= (or ?payload=) present in URL
+  useEffect(() => {
+    const qp = searchParams.get("data") || searchParams.get("payload")
+    if (qp && qp !== encodedData) {
+      setEncodedData(qp)
+      // Trigger import immediately with the query param value
+      handleAutomatedImport(qp)
+    }
+  }, [searchParams])
 
   return (
     <div className="min-h-screen bg-background">
@@ -323,7 +336,7 @@ export default function CGPACalculator() {
                 />
               </div>
 
-              <Button onClick={handleAutomatedImport} disabled={!encodedData.trim() || isLoading} className="w-full">
+              <Button onClick={() => handleAutomatedImport()} disabled={!encodedData.trim() || isLoading} className="w-full">
                 {isLoading ? "Processing..." : "Calculate from Data"}
               </Button>
 

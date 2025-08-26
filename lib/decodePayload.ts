@@ -12,6 +12,7 @@ export function decodePayload(encoded: string): unknown {
 
   // utf8 -> JSON
   const jsonStr = jsonBuf.toString("utf8")
+  console.log(jsonStr);
   return JSON.parse(jsonStr)
 }
 
