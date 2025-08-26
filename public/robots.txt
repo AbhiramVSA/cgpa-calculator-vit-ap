@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://cgpa-calculator.vercel.app/sitemap.xml
+
+# Block access to sensitive files
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
