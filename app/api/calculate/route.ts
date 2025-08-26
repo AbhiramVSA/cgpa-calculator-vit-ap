@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { decodePayload, isCourseArray, type Course } from "@/lib/decodePayload"
 import { gunzipSync } from "zlib"
 
 interface CourseData {
@@ -44,6 +45,14 @@ function calculateCGPA(courses: CourseData[]): number {
   return totalCredits > 0 ? totalGradePoints / totalCredits : 0
 }
 
+function convertToLegacyFormat(courses: Course[]): CourseData[] {
+  return courses.map((course) => ({
+    course_title: course.course_title,
+    credits: course.credits,
+    grade: course.grade,
+  }))
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -75,12 +84,10 @@ export async function GET(request: NextRequest) {
       const jsonString = decompressedData.toString("utf-8")
       courses = JSON.parse(jsonString)
 
-      // Validate that it's an array
       if (!Array.isArray(courses)) {
         throw new Error("Data is not an array")
       }
 
-      // Validate each course object
       for (const course of courses) {
         if (
           typeof course.course_title !== "string" ||
@@ -107,41 +114,56 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const encodedData = body.data
+    const contentType = request.headers.get("content-type") || ""
+    let encoded: string | null = null
 
-    if (!encodedData || typeof encodedData !== "string") {
-      return NextResponse.json({ error: "Invalid or malformed data string provided." }, { status: 400 })
+    if (contentType.includes("application/json")) {
+      const body = await request.json().catch(() => null)
+      encoded = body?.payload ?? body?.data ?? null
+    }
+    if (!encoded) {
+      const url = new URL(request.url)
+      encoded = url.searchParams.get("payload") || url.searchParams.get("data")
+    }
+    if (!encoded) {
+      return NextResponse.json({ error: "Missing payload" }, { status: 400 })
     }
 
-    // Step 1: Base64URL decode the string
+    try {
+      const data = decodePayload(encoded)
+      if (isCourseArray(data)) {
+        const courses: Course[] = data
+        const legacyCourses = convertToLegacyFormat(courses)
+        const cgpa = calculateCGPA(legacyCourses)
+        return NextResponse.json({ cgpa: Number(cgpa.toFixed(2)) }, { status: 200 })
+      }
+    } catch (error) {
+      // Fall back to legacy format if new format fails
+    }
+
     let decodedBuffer: Buffer
     try {
-      decodedBuffer = base64UrlDecode(encodedData)
+      decodedBuffer = base64UrlDecode(encoded)
     } catch (error) {
-      return NextResponse.json({ error: "Invalid or malformed data string provided." }, { status: 400 })
+      return NextResponse.json({ error: "Invalid encoded payload" }, { status: 400 })
     }
 
-    // Step 2: Gzip decompress the result
     let decompressedData: Buffer
     try {
       decompressedData = gunzipSync(decodedBuffer)
     } catch (error) {
-      return NextResponse.json({ error: "Invalid or malformed data string provided." }, { status: 400 })
+      return NextResponse.json({ error: "Invalid encoded payload" }, { status: 400 })
     }
 
-    // Step 3: Parse JSON array of course objects
     let courses: CourseData[]
     try {
       const jsonString = decompressedData.toString("utf-8")
       courses = JSON.parse(jsonString)
 
-      // Validate that it's an array
       if (!Array.isArray(courses)) {
         throw new Error("Data is not an array")
       }
 
-      // Validate each course object
       for (const course of courses) {
         if (
           typeof course.course_title !== "string" ||
@@ -153,16 +175,13 @@ export async function POST(request: NextRequest) {
         }
       }
     } catch (error) {
-      return NextResponse.json({ error: "Invalid or malformed data string provided." }, { status: 400 })
+      return NextResponse.json({ error: "Invalid encoded payload" }, { status: 400 })
     }
 
-    // Step 4: Calculate CGPA
     const cgpa = calculateCGPA(courses)
-
-    // Step 5: Return the result
     return NextResponse.json({ cgpa: Number(cgpa.toFixed(2)) }, { status: 200 })
   } catch (error) {
-    return NextResponse.json({ error: "Invalid or malformed data string provided." }, { status: 400 })
+    return NextResponse.json({ error: "Invalid encoded payload" }, { status: 400 })
   }
 }
 
