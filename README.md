@@ -33,18 +33,18 @@ Fast, API-friendly CGPA & GPA encoder/decoder and visualization interface built 
 
 ## 📂 Project Structure
 
-```
+\`\`\`
 app/             Next.js App Router (pages + API routes)
 	api/calculate  -> Decode & compute CGPA (GET/POST)
 	api/gpa        -> Encode raw course list to compressed payload (POST)
 components/      UI components & client-side calculator container
 lib/             Decoding / parsing utilities
 styles/          Global styling
-```
+\`\`\`
 
 ## 🧠 Data Model (Decoded Course)
 
-```ts
+\`\`\`ts
 type Course = {
 	id: number
 	course_code: string
@@ -55,7 +55,7 @@ type Course = {
 	exam_month: string
 	course_distribution: string
 }
-```
+\`\`\`
 
 Legacy parsing also accepts a minimal shape: `{ course_title, credits, grade }`.
 
@@ -86,47 +86,47 @@ Rounded to 2 decimals for output.
 
 Request Body (JSON): `CourseInput[]`
 
-```json
+\`\`\`json
 [
 	{ "course_code": "MAT101", "credits": 4, "grade": "A" },
 	{ "course_code": "CSE110", "credits": 3, "grade": "S" }
 ]
-```
+\`\`\`
 
 Response:
-```json
+\`\`\`json
 { "encoded": "<compressed-base64url>" }
-```
+\`\`\`
 
 Use this encoded string as the `data` (GET) or `payload` (POST) parameter for `/api/calculate`.
 
 ### 2. GET /api/calculate?data=ENCODED
 
 Returns JSON:
-```json
+\`\`\`json
 { "cgpa": 8.75 }
-```
+\`\`\`
 
 Optional: `&plain=1` or `Accept: text/plain` returns just the number.
 
 ### 3. POST /api/calculate
 
 Body JSON:
-```json
+\`\`\`json
 { "payload": "<encoded>" }
-```
+\`\`\`
 or
-```json
+\`\`\`json
 { "data": "<encoded>" }
-```
+\`\`\`
 
 Response same as GET. Plain mode supported via query or Accept header.
 
 ### Error Shape
 
-```json
+\`\`\`json
 { "error": "Invalid or malformed data string provided." }
-```
+\`\`\`
 
 ## 🤝 Flutter Integration (Planned Enhancement #2)
 
@@ -152,10 +152,10 @@ Implementation outline:
 Prerequisites: Node 18+ (Next.js 15 requirement) & pnpm (preferred) or npm.
 
 Install & run:
-```bash
+\`\`\`bash
 pnpm install
 pnpm dev
-```
+\`\`\`
 
 Then open http://localhost:3000
 
@@ -163,11 +163,11 @@ Then open http://localhost:3000
 
 There is a `test-decode.js` script placeholder (add sample encoded payload tests). Example Node snippet:
 
-```js
+\`\`\`js
 fetch('http://localhost:3000/api/calculate?data=ENCODED')
 	.then(r => r.json())
 	.then(console.log)
-```
+\`\`\`
 
 ## 🔐 Privacy & Data
 
