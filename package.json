@@ -1,12 +1,25 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "vit-ap-cgpa-calculator",
+  "version": "1.0.0",
+  "description": "A modern CGPA calculator for VIT-AP students with manual entry and automated academic report generation",
+  "keywords": [
+    "cgpa",
+    "calculator",
+    "vit-ap",
+    "academic",
+    "gpa",
+    "grades",
+    "next.js"
+  ],
+  "author": "VIT-AP CGPA Calculator",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "test-data": "node generate-test-data.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
