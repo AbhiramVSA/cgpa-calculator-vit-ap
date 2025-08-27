@@ -1,4 +1,4 @@
-import { gunzipSync } from "zlib"
+import { ungzip } from "pako"
 
 export function decodePayload(encoded: string): unknown {
   // base64url -> Buffer
@@ -7,12 +7,11 @@ export function decodePayload(encoded: string): unknown {
   if (pad) b64 += "=".repeat(4 - pad)
   const compressed = Buffer.from(b64, "base64")
 
-  // gunzip
-  const jsonBuf = gunzipSync(compressed)
+  const jsonBuf = ungzip(compressed)
 
   // utf8 -> JSON
-  const jsonStr = jsonBuf.toString("utf8")
-  console.log(jsonStr);
+  const jsonStr = new TextDecoder().decode(jsonBuf)
+  console.log(jsonStr)
   return JSON.parse(jsonStr)
 }
 
