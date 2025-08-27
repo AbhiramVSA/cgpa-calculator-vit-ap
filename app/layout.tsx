@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     description: "Calculate your CGPA manually or import academic data for comprehensive semester-wise reports",
     type: "website",
   },
+    generator: 'v0.app'
 }
 
 export const viewport: Viewport = {

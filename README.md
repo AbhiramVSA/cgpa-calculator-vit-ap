@@ -28,15 +28,15 @@ Generates comprehensive academic reports from encoded course data.
 - `data` (required): Base64URL encoded and gzip compressed academic data
 
 **Example:**
-```
+\`\`\`
 http://localhost:3000/api/app?data=H4sIAAAAAAAAE72Xb2_aMBDGv4qV113l...
-```
+\`\`\`
 
 ## 🏗️ Data Format
 
 The application expects course data in the following JSON format:
 
-```json
+\`\`\`json
 {
   "id": 12,
   "credits_registered": "120.0",
@@ -55,7 +55,7 @@ The application expects course data in the following JSON format:
     }
   ]
 }
-```
+\`\`\`
 
 ## 🛠️ Development
 
@@ -64,7 +64,7 @@ The application expects course data in the following JSON format:
 - npm or pnpm
 
 ### Setup
-```bash
+\`\`\`bash
 # Clone the repository
 git clone <repository-url>
 cd cgpa-calculator-vit-ap
@@ -78,13 +78,13 @@ pnpm install
 npm run dev
 # or
 pnpm dev
-```
+\`\`\`
 
 ### Testing
 Generate test data using the included utility:
-```bash
+\`\`\`bash
 node generate-test-data.js
-```
+\`\`\`
 
 This will output:
 - Sample student data overview
