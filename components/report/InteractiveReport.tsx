@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Award, BookOpen, Calendar, ExternalLink, Printer, RefreshCcw, Smartphone, Star } from "lucide-react"
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, PieChart, Pie, Cell } from "recharts"
 import type { Course as ImportedCourse } from "@/lib/decodePayload"
 
 type Course = ImportedCourse
@@ -65,6 +66,36 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
         return { cgpa, avgGpa, courses: data.courses.length }
     }, [data.courses, semesters])
 
+    // Charts data
+    const gpaTrendData = useMemo(() => semesters.map((s) => ({ name: s.semester, gpa: Number(s.gpa.toFixed(2)) })), [semesters])
+    const creditsBySemData = useMemo(() => {
+        return semesters.map((s) => {
+            const total = s.courses.reduce((sum, c) => sum + Number(c.credits), 0)
+            const counted = s.courses.filter((c) => c.grade !== "P").reduce((sum, c) => sum + Number(c.credits), 0)
+            return { name: s.semester, total, counted }
+        })
+    }, [semesters])
+    const gradeDistributionData = useMemo(() => {
+        const counts = data.courses.reduce<Record<string, number>>((acc, c) => {
+            acc[c.grade] = (acc[c.grade] || 0) + 1
+            return acc
+        }, {})
+        return Object.entries(counts)
+            .map(([grade, value]) => ({ grade, value }))
+            .sort((a, b) => (a.grade > b.grade ? 1 : -1))
+    }, [data.courses])
+    // Vibrant palette per grade (colorful to pop on b/w background)
+    const GRADE_COLORS: Record<string, string> = {
+        S: "#10b981", // emerald
+        A: "#3b82f6", // blue
+        B: "#f59e0b", // amber
+        C: "#f97316", // orange
+        D: "#ef4444", // red
+        E: "#ef4444", // red
+        F: "#b91c1c", // dark red
+        P: "#6b7280", // gray
+    }
+
     const changeGrade = (courseId: number, newGrade: string) => {
         setData((prev) => ({
             ...prev,
@@ -97,20 +128,9 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
 
     return (
         <div className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
-            <div className="flex items-center justify-between gap-3 mb-6">
-                <div className="flex items-center gap-3">
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary ring-1 ring-primary/20">
-                        <BookOpen className="h-5 w-5" />
-                    </span>
-                    <div>
-                        <h1 className="text-xl font-semibold leading-tight">Interactive Academic Report</h1>
-                        <p className="text-sm text-muted-foreground">Student ID: {data.id}</p>
-                    </div>
-                </div>
-                <div className="hidden sm:flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={reset}><RefreshCcw className="h-4 w-4 mr-2" /> Reset</Button>
-                    <Button size="sm" onClick={() => window.print()}><Printer className="h-4 w-4 mr-2" /> Print</Button>
-                </div>
+            <div className="sm:flex flex items-end justify-end gap-3 mb-6">
+                <Button variant="outline" size="sm" onClick={reset}><RefreshCcw className="h-4 w-4 mr-2" /> Reset</Button>
+                <Button size="sm" onClick={() => window.print()}><Printer className="h-4 w-4 mr-2" /> Print</Button>
             </div>
 
             <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
@@ -142,6 +162,75 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
                     <CardContent className="flex items-end justify-between">
                         <div className="text-3xl font-semibold">{semesters.length}</div>
                         <div className="text-right text-sm text-muted-foreground flex items-center gap-1"><Calendar className="h-4 w-4" /> Journey</div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Charts */}
+            <div className="mt-6 grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">GPA trend by semester</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-muted-foreground">
+                        <div className="h-64 w-full">
+                            <ResponsiveContainer>
+                                <LineChart data={gpaTrendData} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
+                                    <CartesianGrid stroke="currentColor" strokeOpacity={0.15} />
+                                    <XAxis dataKey="name" tickMargin={8} tickLine={false} axisLine={false} />
+                                    <YAxis domain={[0, 10]} tickMargin={8} tickLine={false} axisLine={false} />
+                                    <Tooltip contentStyle={{ borderRadius: 8 }} />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="gpa"
+                                        stroke="#a78bfa" /* violet-400 */
+                                        strokeWidth={2}
+                                        dot={{ r: 3, stroke: "#a78bfa", fill: "#a78bfa" }}
+                                        activeDot={{ r: 4, stroke: "#a78bfa", fill: "#a78bfa" }}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Credits by semester</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-muted-foreground">
+                        <div className="h-64 w-full">
+                            <ResponsiveContainer>
+                                <BarChart data={creditsBySemData} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
+                                    <CartesianGrid stroke="currentColor" strokeOpacity={0.15} />
+                                    <XAxis dataKey="name" tickMargin={8} tickLine={false} axisLine={false} />
+                                    <YAxis tickMargin={8} tickLine={false} axisLine={false} />
+                                    <Tooltip contentStyle={{ borderRadius: 8 }} />
+                                    <Legend />
+                                    <Bar dataKey="counted" name="Counted" fill="#22c55e" radius={[6, 6, 0, 0]} />
+                                    <Bar dataKey="total" name="Total" fill="#06b6d4" fillOpacity={0.7} radius={[6, 6, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Grade distribution</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="h-64 w-full">
+                            <ResponsiveContainer>
+                                <PieChart>
+                                    <Tooltip contentStyle={{ borderRadius: 8 }} formatter={(val, name) => [String(val), `Grade ${String(name)}`]} />
+                                    <Legend verticalAlign="bottom" align="center" iconType="circle" />
+                                    <Pie data={gradeDistributionData} dataKey="value" nameKey="grade" innerRadius={48} outerRadius={80} paddingAngle={3} stroke="hsl(var(--border))">
+                                        {gradeDistributionData.map((entry, idx) => (
+                                            <Cell key={`cell-${idx}`} fill={GRADE_COLORS[entry.grade] ?? "#94a3b8"} />
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
