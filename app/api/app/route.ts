@@ -169,15 +169,18 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Academic Report - VIT-AP University</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+        <title>Interactive Academic Report - VIT-AP University</title>
+        <script>
+            window.tailwind = window.tailwind || {}; 
+            window.tailwind.config = { darkMode: 'class' };
+        </script>
+        <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
-        body { 
-            font-family: 'Inter', sans-serif; 
-        }
+    body { font-family: 'Inter', sans-serif; }
+    .dark .gpa-circle { background: conic-gradient(from 0deg, #34d399 var(--cgpa-angle), #1f2937 0deg); }
         
         .fade-in {
             animation: fadeIn 0.6s ease-in-out;
@@ -280,27 +283,39 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
             .add-course-btn, .remove-course-btn { display: none !important; }
         }
     </style>
-</head>
-<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+  </head>
+  <body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-black">
     <!-- Header -->
-    <div class="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 no-print">
+    <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10 no-print">
         <div class="container mx-auto px-4 py-4 max-w-6xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                    <a href="/" class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center hover:opacity-90 transition-opacity" title="Back to site">
                         <i data-feather="graduation-cap" class="text-white w-6 h-6"></i>
-                    </div>
+                    </a>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-800">Interactive Academic Report</h1>
-                        <p class="text-sm text-gray-600">Student ID: ${studentData.id} • Edit grades to see live CGPA updates</p>
+                        <h1 class="text-xl font-bold text-gray-800 dark:text-slate-100">Interactive Academic Report</h1>
+                        <p class="text-sm text-gray-600 dark:text-slate-400">Student ID: ${studentData.id} • Edit grades to see live CGPA updates</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <button onclick="resetToOriginal()" class="no-print bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors flex items-center space-x-2">
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <button onclick="toggleTheme()" class="no-print hidden sm:inline-flex items-center space-x-2 px-3 py-2 rounded-lg border text-sm hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
+                        <i data-feather="moon" class="w-4 h-4"></i>
+                        <span class="hidden md:inline">Theme</span>
+                    </button>
+                    <a href="https://github.com/AbhiramVSA/cgpa-calculator-vit-ap" target="_blank" rel="noopener" class="no-print hidden sm:inline-flex items-center space-x-2 px-3 py-2 rounded-lg border text-sm hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors" aria-label="Star repository">
+                        <i data-feather="star" class="w-4 h-4"></i>
+                        <span class="hidden md:inline">Star</span>
+                    </a>
+                    <button onclick="openApp()" class="no-print bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-3 py-2 rounded-lg hover:opacity-95 transition-opacity flex items-center space-x-2">
+                        <i data-feather="smartphone" class="w-4 h-4"></i>
+                        <span>Open App</span>
+                    </button>
+                    <button onclick="resetToOriginal()" class="no-print bg-gray-500 text-white px-3 py-2 rounded-lg hover:bg-gray-600 transition-colors flex items-center space-x-2">
                         <i data-feather="refresh-cw" class="w-4 h-4"></i>
                         <span>Reset</span>
                     </button>
-                    <button onclick="window.print()" class="print-button px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity flex items-center space-x-2">
+                    <button onclick="window.print()" class="print-button px-3 py-2 text-white rounded-lg hover:opacity-90 transition-opacity flex items-center space-x-2">
                         <i data-feather="printer" class="w-4 h-4"></i>
                         <span>Print Report</span>
                     </button>
@@ -314,19 +329,19 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 fade-in">
             <!-- CGPA Circle -->
             <div class="lg:col-span-1">
-                <div class="bg-white/90 stat-card rounded-2xl p-6 text-center h-full flex flex-col justify-center">
+                <div class="bg-white/90 dark:bg-slate-900/90 stat-card rounded-2xl p-6 text-center h-full flex flex-col justify-center">
                     <div class="relative mx-auto mb-4">
                         <div class="gpa-circle w-32 h-32 rounded-full flex items-center justify-center relative" style="--cgpa-angle: ${(typeof studentData.cgpa === 'number' ? studentData.cgpa : parseFloat(studentData.cgpa.toString())) * 36}deg;">
-                            <div class="bg-white w-24 h-24 rounded-full flex items-center justify-center shadow-lg">
+                            <div class="bg-white dark:bg-slate-800 w-24 h-24 rounded-full flex items-center justify-center shadow-lg">
                                 <div class="text-center">
-                                    <div class="text-3xl font-bold text-gray-800" id="overall-cgpa">${typeof studentData.cgpa === 'number' ? studentData.cgpa.toFixed(2) : parseFloat(studentData.cgpa.toString()).toFixed(2)}</div>
-                                    <div class="text-xs text-gray-500 font-medium">CGPA</div>
+                                    <div class="text-3xl font-bold text-gray-800 dark:text-slate-100" id="overall-cgpa">${typeof studentData.cgpa === 'number' ? studentData.cgpa.toFixed(2) : parseFloat(studentData.cgpa.toString()).toFixed(2)}</div>
+                                    <div class="text-xs text-gray-500 dark:text-slate-400 font-medium">CGPA</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Overall Performance</h3>
-                    <div class="flex justify-center space-x-4 text-sm text-gray-600">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-2">Overall Performance</h3>
+                    <div class="flex justify-center space-x-4 text-sm text-gray-600 dark:text-slate-400">
                         <div class="flex items-center">
                             <i data-feather="trending-up" class="w-4 h-4 mr-1"></i>
                             <span id="average-gpa">${averageGPA.toFixed(2)} Avg GPA</span>
@@ -378,7 +393,7 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
         <!-- Semester-wise Performance -->
         <div class="space-y-6">
             ${semesterData.map((semester, index) => `
-            <div class="bg-white/90 rounded-2xl shadow-lg overflow-hidden slide-up" style="animation-delay: ${index * 0.1}s" data-semester="${semester.semester}">
+            <div class="bg-white/90 dark:bg-slate-900/90 rounded-2xl shadow-lg overflow-hidden slide-up" style="animation-delay: ${index * 0.1}s" data-semester="${semester.semester}">
                 <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-6 text-white">
                     <div class="flex flex-col md:flex-row md:justify-between md:items-center">
                         <div class="flex items-center space-x-3 mb-4 md:mb-0">
@@ -412,25 +427,25 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b-2 border-gray-100">
-                                    <th class="text-left py-4 px-3 font-semibold text-gray-700 text-sm uppercase tracking-wide">Course</th>
-                                    <th class="text-left py-4 px-3 font-semibold text-gray-700 text-sm uppercase tracking-wide">Title</th>
-                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 text-sm uppercase tracking-wide">Type</th>
-                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 text-sm uppercase tracking-wide">Credits</th>
-                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 text-sm uppercase tracking-wide">Grade</th>
-                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 text-sm uppercase tracking-wide">Points</th>
-                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 text-sm uppercase tracking-wide no-print">Actions</th>
+                                <tr class="border-b-2 border-gray-100 dark:border-slate-800">
+                                    <th class="text-left py-4 px-3 font-semibold text-gray-700 dark:text-slate-300 text-sm uppercase tracking-wide">Course</th>
+                                    <th class="text-left py-4 px-3 font-semibold text-gray-700 dark:text-slate-300 text-sm uppercase tracking-wide">Title</th>
+                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 dark:text-slate-300 text-sm uppercase tracking-wide">Type</th>
+                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 dark:text-slate-300 text-sm uppercase tracking-wide">Credits</th>
+                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 dark:text-slate-300 text-sm uppercase tracking-wide">Grade</th>
+                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 dark:text-slate-300 text-sm uppercase tracking-wide">Points</th>
+                                    <th class="text-center py-4 px-3 font-semibold text-gray-700 dark:text-slate-300 text-sm uppercase tracking-wide no-print">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 semester-courses" data-semester="${semester.semester}">
                                 ${semester.courses.map((course: CourseData, courseIndex: number) => `
-                                <tr class="course-row hover:bg-gray-50 transition-all duration-200" style="animation-delay: ${index * 0.1 + courseIndex * 0.05}s" data-course-id="${course.id}">
+                <tr class="course-row hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-200" style="animation-delay: ${index * 0.1 + courseIndex * 0.05}s" data-course-id="${course.id}">
                                     <td class="py-4 px-3">
-                                        <div class="font-semibold text-indigo-600 text-sm course-code">${course.course_code}</div>
+                    <div class="font-semibold text-indigo-600 text-sm course-code">${course.course_code}</div>
                                     </td>
                                     <td class="py-4 px-3">
-                                        <div class="text-gray-800 font-medium text-sm leading-tight course-title">${course.course_title}</div>
-                                        <div class="text-gray-500 text-xs mt-1 course-distribution">${course.course_distribution}</div>
+                    <div class="text-gray-800 dark:text-slate-100 font-medium text-sm leading-tight course-title">${course.course_title}</div>
+                    <div class="text-gray-500 dark:text-slate-400 text-xs mt-1 course-distribution">${course.course_distribution}</div>
                                     </td>
                                     <td class="py-4 px-3 text-center">
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 course-type">
@@ -438,7 +453,7 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
                                         </span>
                                     </td>
                                     <td class="py-4 px-3 text-center">
-                                        <span class="font-semibold text-gray-700 course-credits">${course.credits}</span>
+                    <span class="font-semibold text-gray-700 dark:text-slate-300 course-credits">${course.credits}</span>
                                     </td>
                                     <td class="py-4 px-3 text-center">
                                         <select class="editable-grade inline-flex items-center justify-center w-16 h-10 rounded-lg text-sm font-bold text-center border-0 cursor-pointer
@@ -460,7 +475,7 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
                                         </select>
                                     </td>
                                     <td class="py-4 px-3 text-center">
-                                        <span class="font-semibold text-gray-700 grade-points">
+                                        <span class="font-semibold text-gray-700 dark:text-slate-300 grade-points">
                                             ${course.grade === 'P' ? 'N/A' : gradePoints[course.grade] || 0}
                                         </span>
                                     </td>
@@ -541,7 +556,7 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
         </div>
         
         <!-- Footer -->
-        <div class="text-center text-gray-500 text-sm mt-12 py-8 border-t border-gray-200">
+                <div class="text-center text-gray-500 dark:text-slate-400 text-sm mt-12 py-8 border-t border-gray-200 dark:border-slate-800">
             <div class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-4">
                 <div class="flex items-center space-x-2">
                     <i data-feather="shield-check" class="w-4 h-4"></i>
@@ -559,13 +574,56 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
                             })}</span>
                 </div>
             </div>
-            <p class="mt-2 text-xs">This report is auto-generated and contains confidential academic information.</p>
+                        <p class="mt-2 text-xs">This report is auto-generated and contains confidential academic information.</p>
+                        <p class="mt-2 text-xs">Made with <span aria-hidden>❤️</span> by <a href="https://github.com/AbhiramVSA" target="_blank" rel="noopener" class="underline-offset-4 hover:underline">Abhiram</a></p>
         </div>
     </div>
 
     <script>
         // Initialize Feather icons
         feather.replace();
+        
+                // Theme toggle with persistence
+                (function() {
+                    const saved = localStorage.getItem('report-theme');
+                    if (saved === 'dark') document.documentElement.classList.add('dark');
+                })();
+                function toggleTheme() {
+                    const el = document.documentElement;
+                    const isDark = el.classList.toggle('dark');
+                    localStorage.setItem('report-theme', isDark ? 'dark' : 'light');
+                }
+
+                // Open app via custom scheme/intent with store fallback
+                function openApp() {
+                    const ua = navigator.userAgent || '';
+                    const isAndroid = /Android/i.test(ua);
+                    const isIOS = /iPhone|iPad|iPod/i.test(ua);
+                    const pkg = 'com.udhay.vitapstudentapp';
+                    const play = 'https://play.google.com/store/apps/details?id=' + pkg;
+                    const appstore = 'https://apps.apple.com/in/app/vitap-student/id6748966515';
+
+                    // Assumption: iOS custom scheme
+                    const iosScheme = 'vitapstudent://grades';
+
+                    const start = Date.now();
+                    let timer = setTimeout(() => {
+                        // If user hasn't switched by now, fallback to store
+                        if (Date.now() - start < 1800) return; // canceled or switched
+                        window.location.href = isAndroid ? play : appstore;
+                    }, 1500);
+
+                    if (isAndroid) {
+                        // Android intent to app (grades)
+                        window.location.href = 'intent://grades#Intent;package=' + pkg + ';end';
+                    } else if (isIOS) {
+                        window.location.href = iosScheme;
+                    } else {
+                        // Desktop: point to stores
+                        clearTimeout(timer);
+                        window.open('https://github.com/AbhiramVSA/cgpa-calculator-vit-ap', '_blank');
+                    }
+                }
         
         // Store original data for reset functionality
         const originalData = ${JSON.stringify(studentData)};
@@ -588,7 +646,7 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
             P: 'bg-gray-100 text-gray-600'
         };
         
-        function updateGrade(selectElement) {
+    function updateGrade(selectElement) {
             const courseId = selectElement.dataset.courseId;
             const semester = selectElement.dataset.semester;
             const newGrade = selectElement.value;
@@ -607,6 +665,10 @@ function generateHTML(studentData: StudentData, semesterData: any[]) {
             const row = selectElement.closest('tr');
             const gradePointsSpan = row.querySelector('.grade-points');
             gradePointsSpan.textContent = newGrade === 'P' ? 'N/A' : gradePoints[newGrade] || 0;
+            // Micro interaction highlight
+            row.style.transition = 'background-color 0.6s ease';
+            row.classList.add('bg-amber-50');
+            setTimeout(() => row.classList.remove('bg-amber-50'), 600);
             
             // Recalculate and update GPAs
             recalculateGPAs();
