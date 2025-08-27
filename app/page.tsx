@@ -38,7 +38,7 @@ export default function LandingPage() {
                 </a>
               </div>
               <div className="flex items-center justify-center flex-wrap gap-6 text-sm text-muted-foreground">
-                <div className="inline-flex items-center gap-2"><Upload className="h-4 w-4" />Import encoded string</div>
+                <div className="inline-flex items-center gap-2"><Upload className="h-4 w-4" />Import from mobile app</div>
                 <div className="inline-flex items-center gap-2"><Calculator className="h-4 w-4" />Instant CGPA</div>
                 <div className="inline-flex items-center gap-2"><BarChart2 className="h-4 w-4" />Interactive report</div>
               </div>

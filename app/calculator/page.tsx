@@ -193,7 +193,7 @@ export default function CGPACalculator() {
             setImportSuccess(true)
             setCourses([])
             setCgpa(null)
-            const reportUrl = `/api/app?data=${encodeURIComponent(toProcess)}`
+            const reportUrl = `/report?data=${encodeURIComponent(toProcess)}`
             window.open(reportUrl, '_blank')
         } catch (error) {
             console.error("Decoding error:", error)
