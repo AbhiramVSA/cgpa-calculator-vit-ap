@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -16,13 +16,17 @@ export const metadata: Metadata = {
   description: "Calculate your CGPA manually or import academic data for comprehensive semester-wise reports. Built for VIT-AP students.",
   keywords: ["CGPA Calculator", "VIT-AP", "Academic Report", "GPA", "Semester", "Grades"],
   authors: [{ name: "VIT-AP CGPA Calculator" }],
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
   openGraph: {
     title: "VIT-AP CGPA Calculator",
     description: "Calculate your CGPA manually or import academic data for comprehensive semester-wise reports",
     type: "website",
   },
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 }
 
 export default function RootLayout({
