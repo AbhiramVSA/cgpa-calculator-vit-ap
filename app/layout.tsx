@@ -1,25 +1,24 @@
-import type React from "react"
 import type { Metadata } from "next"
-import { Inter, Poppins } from "next/font/google"
+import { Inter } from "next/font/google"
 import "./globals.css"
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-poppins",
 })
 
 export const metadata: Metadata = {
-  title: "AI-Powered CGPA Calculator",
-  description: "Calculate your CGPA manually or through automated import with our intelligent calculator",
-  generator: "v0.app",
+  title: "VIT-AP CGPA Calculator",
+  description: "Calculate your CGPA manually or import academic data for comprehensive semester-wise reports. Built for VIT-AP students.",
+  keywords: ["CGPA Calculator", "VIT-AP", "Academic Report", "GPA", "Semester", "Grades"],
+  authors: [{ name: "VIT-AP CGPA Calculator" }],
+  viewport: "width=device-width, initial-scale=1",
+  robots: "index, follow",
+  openGraph: {
+    title: "VIT-AP CGPA Calculator",
+    description: "Calculate your CGPA manually or import academic data for comprehensive semester-wise reports",
+    type: "website",
+  },
 }
 
 export default function RootLayout({
@@ -28,8 +27,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans ${inter.variable} ${poppins.variable} antialiased`}>{children}</body>
+    <html lang="en" className="scroll-smooth">
+      <body className={`${inter.className} antialiased bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen`}>
+        {children}
+      </body>
     </html>
   )
 }
