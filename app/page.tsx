@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Rocket, Smartphone, Upload, Calculator, BarChart2 } from "lucide-react"
+import { ArrowRight, Smartphone, Upload, Calculator, BarChart2 } from "lucide-react"
 
 export default function LandingPage() {
   return (
@@ -13,8 +13,8 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="mx-auto max-w-7xl px-4 pt-14 pb-8 sm:pt-20 sm:pb-16">
-          <div className="grid gap-10 lg:grid-cols-2 items-center">
-            <div className="space-y-6">
+          <div className="grid gap-10 place-items-center">
+            <div className="space-y-6 mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs text-muted-foreground">
                 Built for VIT-AP students
               </div>
@@ -24,7 +24,7 @@ export default function LandingPage() {
               <p className="text-muted-foreground text-pretty">
                 Skip manual entry with one-tap import, then get a beautiful interactive report with live editing, charts, and a share-ready view.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link href="/calculator" className="w-full sm:w-auto">
                   <Button className="w-full group">
                     Open Calculator
@@ -37,17 +37,10 @@ export default function LandingPage() {
                   </Button>
                 </a>
               </div>
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center justify-center flex-wrap gap-6 text-sm text-muted-foreground">
                 <div className="inline-flex items-center gap-2"><Upload className="h-4 w-4" />Import encoded string</div>
                 <div className="inline-flex items-center gap-2"><Calculator className="h-4 w-4" />Instant CGPA</div>
                 <div className="inline-flex items-center gap-2"><BarChart2 className="h-4 w-4" />Interactive report</div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-[3/2] w-full rounded-xl border bg-card p-4 shadow-sm grid place-items-center">
-                <div className="text-sm text-muted-foreground inline-flex items-center gap-2">
-                  <Rocket className="h-4 w-4 text-primary" /> One‑tap import from app
-                </div>
               </div>
             </div>
           </div>
