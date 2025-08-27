@@ -9,12 +9,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Calculator, Upload, Plus, RotateCcw, Trash2, CheckCircle, AlertCircle, BookOpen, Award } from "lucide-react"
+import { decodePayload, type Course as ImportedCourse } from "@/lib/decodePayload"
 
 interface Course {
   id: string
   title: string
   credits: number
   grade: string
+}
+
+interface SemesterData {
+  semester: string
+  courses: ImportedCourse[]
+  gpa: number
+}
+
+interface StudentData {
+  id: number
+  credits_registered: number
+  credits_earned: number
+  cgpa: number
+  courses: ImportedCourse[]
 }
 
 const gradePoints: Record<string, number> = {
@@ -40,6 +55,8 @@ export default function CGPACalculator() {
   const [cgpa, setCgpa] = useState<number | null>(null)
   const [importSuccess, setImportSuccess] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
+  const [semesterData, setSemesterData] = useState<SemesterData[]>([])
+  const [studentData, setStudentData] = useState<StudentData | null>(null)
   const searchParams = useSearchParams()
 
   const calculateCGPA = (courseList: Course[]) => {
@@ -53,6 +70,73 @@ export default function CGPACalculator() {
     const totalCredits = validCourses.reduce((sum, course) => sum + course.credits, 0)
 
     return totalCredits > 0 ? totalGradePoints / totalCredits : 0
+  }
+
+  const calculateSemesterGPA = (courses: ImportedCourse[]): number => {
+    const validCourses = courses.filter((course) => course.grade !== "P")
+    if (validCourses.length === 0) return 0
+
+    const totalGradePoints = validCourses.reduce((sum, course) => {
+      const points = gradePoints[course.grade] || 0
+      const credits = typeof course.credits === 'string' ? parseFloat(course.credits) : course.credits
+      return sum + points * credits
+    }, 0)
+
+    const totalCredits = validCourses.reduce((sum, course) => {
+      const credits = typeof course.credits === 'string' ? parseFloat(course.credits) : course.credits
+      return sum + credits
+    }, 0)
+
+    return totalCredits > 0 ? totalGradePoints / totalCredits : 0
+  }
+
+  const calculateOverallCGPA = (semesters: SemesterData[]): number => {
+    const allValidCourses = semesters.flatMap(sem => sem.courses).filter(course => course.grade !== "P")
+    if (allValidCourses.length === 0) return 0
+
+    const totalGradePoints = allValidCourses.reduce((sum, course) => {
+      const points = gradePoints[course.grade] || 0
+      const credits = typeof course.credits === 'string' ? parseFloat(course.credits) : course.credits
+      return sum + points * credits
+    }, 0)
+
+    const totalCredits = allValidCourses.reduce((sum, course) => {
+      const credits = typeof course.credits === 'string' ? parseFloat(course.credits) : course.credits
+      return sum + credits
+    }, 0)
+
+    return totalCredits > 0 ? totalGradePoints / totalCredits : 0
+  }
+
+  const groupCoursesBySemester = (courses: ImportedCourse[]): SemesterData[] => {
+    const semesterMap = new Map<string, ImportedCourse[]>()
+
+    courses.forEach(course => {
+      const semester = course.exam_month
+      if (!semesterMap.has(semester)) {
+        semesterMap.set(semester, [])
+      }
+      semesterMap.get(semester)!.push(course)
+    })
+
+    // Sort semesters chronologically
+    const sortedSemesters = Array.from(semesterMap.keys()).sort((a, b) => {
+      const parseDate = (dateStr: string) => {
+        const [month, year] = dateStr.split('-')
+        const monthMap: Record<string, number> = {
+          'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
+          'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
+        }
+        return new Date(parseInt(year), monthMap[month] - 1)
+      }
+      return parseDate(a).getTime() - parseDate(b).getTime()
+    })
+
+    return sortedSemesters.map(semester => ({
+      semester,
+      courses: semesterMap.get(semester)!,
+      gpa: calculateSemesterGPA(semesterMap.get(semester)!)
+    }))
   }
 
   const addCourse = () => {
@@ -98,6 +182,8 @@ export default function CGPACalculator() {
     setEncodedData("")
     setImportSuccess(false)
     setImportError(null)
+    setSemesterData([])
+    setStudentData(null)
   }
 
   const handleAutomatedImport = async (value?: string) => {
@@ -109,11 +195,51 @@ export default function CGPACalculator() {
     setImportSuccess(false)
 
     try {
-      // Redirect to the new API endpoint that displays the full report
+      // Decode the payload locally
+      const decoded = decodePayload(toProcess) as StudentData
+
+      if (!decoded.courses || !Array.isArray(decoded.courses)) {
+        throw new Error("Invalid data structure - missing courses array")
+      }
+
+      // Process the data
+      const processedStudentData: StudentData = {
+        ...decoded,
+        id: typeof decoded.id === 'string' ? parseInt(decoded.id) : decoded.id,
+        credits_registered: typeof decoded.credits_registered === 'string'
+          ? parseFloat(decoded.credits_registered)
+          : decoded.credits_registered,
+        credits_earned: typeof decoded.credits_earned === 'string'
+          ? parseFloat(decoded.credits_earned)
+          : decoded.credits_earned,
+        cgpa: typeof decoded.cgpa === 'string'
+          ? parseFloat(decoded.cgpa)
+          : decoded.cgpa,
+        courses: decoded.courses.map(course => ({
+          ...course,
+          credits: typeof course.credits === 'string'
+            ? parseFloat(course.credits)
+            : course.credits
+        }))
+      }
+
+      // Group courses by semester
+      const semesters = groupCoursesBySemester(processedStudentData.courses)
+
+      setStudentData(processedStudentData)
+      setSemesterData(semesters)
+      setImportSuccess(true)
+
+      // Clear manual courses when importing
+      setCourses([])
+      setCgpa(null)
+
+      // Directly redirect to interactive report instead of showing success message
       const reportUrl = `/api/app?data=${encodeURIComponent(toProcess)}`
       window.open(reportUrl, '_blank')
-      setImportSuccess(true)
+
     } catch (error) {
+      console.error("Decoding error:", error)
       setImportError("Error processing data. Please check your input.")
     } finally {
       setIsLoading(false)
@@ -136,7 +262,7 @@ export default function CGPACalculator() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -148,10 +274,11 @@ export default function CGPACalculator() {
             </h1>
           </div>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Calculate your CGPA manually or import your academic data for a comprehensive semester-wise report
+            Calculate your CGPA manually or import your academic data for a comprehensive interactive report
           </p>
         </div>
 
+        {/* Manual Calculator and Import Section */}
         <div className="grid gap-8 md:grid-cols-2">
           {/* Manual Calculator */}
           <Card className="relative overflow-hidden">
@@ -165,7 +292,7 @@ export default function CGPACalculator() {
                 Add courses one by one to calculate your CGPA
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 relative">{/* ... content remains the same ... */}
+            <CardContent className="space-y-4 relative">
               <div className="space-y-2">
                 <Label htmlFor="course-title">Course Title</Label>
                 <Input
@@ -263,7 +390,7 @@ export default function CGPACalculator() {
                 Academic Report
               </CardTitle>
               <CardDescription>
-                Import your encoded academic data for a detailed semester-wise report
+                Import your encoded academic data for an interactive semester-wise report
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 relative">
@@ -278,7 +405,7 @@ export default function CGPACalculator() {
                   className="focus:ring-2 focus:ring-green-500 transition-all resize-none"
                 />
                 <p className="text-xs text-gray-500">
-                  This data contains your complete academic record with courses, grades, and CGPA information
+                  Import your data to edit grades and see real-time CGPA updates
                 </p>
               </div>
 
@@ -295,7 +422,7 @@ export default function CGPACalculator() {
                 ) : (
                   <>
                     <Upload className="h-4 w-4 mr-2" />
-                    Generate Academic Report
+                    Import & Edit Data
                   </>
                 )}
               </Button>
@@ -304,7 +431,7 @@ export default function CGPACalculator() {
                 <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg animate-in slide-in-from-top-2 duration-300">
                   <CheckCircle className="h-5 w-5 text-green-600" />
                   <span className="text-sm text-green-800">
-                    Academic report opened in new tab!
+                    Academic data imported successfully!
                   </span>
                 </div>
               )}
@@ -315,104 +442,104 @@ export default function CGPACalculator() {
                   <span className="text-sm text-red-800">{importError}</span>
                 </div>
               )}
-
             </CardContent>
           </Card>
         </div>
+      </div>
 
-        {/* Results Section */}
-        {courses.length > 0 && (
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-blue-600" />
-                Course Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="border-b bg-gray-50">
-                      <th className="text-left p-3 font-medium">Course</th>
-                      <th className="text-left p-3 font-medium">Credits</th>
-                      <th className="text-left p-3 font-medium">Grade</th>
-                      <th className="text-left p-3 font-medium">Points</th>
-                      <th className="text-left p-3 font-medium">Action</th>
+      {/* Manual Courses Results Section */}
+      {courses.length > 0 && (
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-blue-600" />
+              Course Summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b bg-gray-50">
+                    <th className="text-left p-3 font-medium">Course</th>
+                    <th className="text-left p-3 font-medium">Credits</th>
+                    <th className="text-left p-3 font-medium">Grade</th>
+                    <th className="text-left p-3 font-medium">Points</th>
+                    <th className="text-left p-3 font-medium">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {courses.map((course, index) => (
+                    <tr key={course.id} className={`border-b hover:bg-gray-50 transition-colors ${index % 2 === 0 ? "bg-gray-25" : ""}`}>
+                      <td className="p-3">{course.title}</td>
+                      <td className="p-3 font-mono">{course.credits}</td>
+                      <td className="p-3">
+                        <span className={`px-2 py-1 rounded text-sm font-medium ${course.grade === "S" ? "bg-green-100 text-green-800" :
+                          course.grade === "A" ? "bg-blue-100 text-blue-800" :
+                            course.grade === "B" ? "bg-yellow-100 text-yellow-800" :
+                              course.grade === "C" ? "bg-orange-100 text-orange-800" :
+                                course.grade === "F" ? "bg-red-100 text-red-800" :
+                                  "bg-gray-100 text-gray-800"
+                          }`}>
+                          {course.grade}
+                        </span>
+                      </td>
+                      <td className="p-3 font-mono">
+                        {course.grade === "P" ? "N/A" : gradePoints[course.grade]}
+                      </td>
+                      <td className="p-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeCourse(course.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {courses.map((course, index) => (
-                      <tr key={course.id} className={`border-b hover:bg-gray-50 transition-colors ${index % 2 === 0 ? "bg-gray-25" : ""}`}>
-                        <td className="p-3">{course.title}</td>
-                        <td className="p-3 font-mono">{course.credits}</td>
-                        <td className="p-3">
-                          <span className={`px-2 py-1 rounded text-sm font-medium ${course.grade === "S" ? "bg-green-100 text-green-800" :
-                              course.grade === "A" ? "bg-blue-100 text-blue-800" :
-                                course.grade === "B" ? "bg-yellow-100 text-yellow-800" :
-                                  course.grade === "C" ? "bg-orange-100 text-orange-800" :
-                                    course.grade === "F" ? "bg-red-100 text-red-800" :
-                                      "bg-gray-100 text-gray-800"
-                            }`}>
-                            {course.grade}
-                          </span>
-                        </td>
-                        <td className="p-3 font-mono">
-                          {course.grade === "P" ? "N/A" : gradePoints[course.grade]}
-                        </td>
-                        <td className="p-3">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeCourse(course.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              {cgpa !== null && (
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Award className="h-5 w-5 text-blue-600" />
-                      <h3 className="font-semibold text-blue-900">CGPA</h3>
-                    </div>
-                    <div className="text-2xl font-bold text-blue-700">
-                      {cgpa.toFixed(2)}
-                    </div>
+            {cgpa !== null && (
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Award className="h-5 w-5 text-blue-600" />
+                    <h3 className="font-semibold text-blue-900">CGPA</h3>
                   </div>
-
-                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <BookOpen className="h-5 w-5 text-green-600" />
-                      <h3 className="font-semibold text-green-900">Courses</h3>
-                    </div>
-                    <div className="text-2xl font-bold text-green-700">
-                      {courses.length}
-                    </div>
-                  </div>
-
-                  <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Calculator className="h-5 w-5 text-purple-600" />
-                      <h3 className="font-semibold text-purple-900">Credits</h3>
-                    </div>
-                    <div className="text-2xl font-bold text-purple-700">
-                      {courses.filter((c) => c.grade !== "P").reduce((sum, c) => sum + c.credits, 0)}
-                    </div>
+                  <div className="text-2xl font-bold text-blue-700">
+                    {cgpa.toFixed(2)}
                   </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-      </div>
+
+                <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <BookOpen className="h-5 w-5 text-green-600" />
+                    <h3 className="font-semibold text-green-900">Courses</h3>
+                  </div>
+                  <div className="text-2xl font-bold text-green-700">
+                    {courses.length}
+                  </div>
+                </div>
+
+                <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Calculator className="h-5 w-5 text-purple-600" />
+                    <h3 className="font-semibold text-purple-900">Credits</h3>
+                  </div>
+                  <div className="text-2xl font-bold text-purple-700">
+                    {courses.filter((c) => c.grade !== "P").reduce((sum, c) => sum + c.credits, 0)}
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
+
   )
 }
