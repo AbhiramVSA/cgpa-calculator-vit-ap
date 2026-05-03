@@ -1,0 +1,427 @@
+Course Code,Course Title,Course Type,Credits
+CSE1005,Software Engineering,ETL,4.0
+CSE1008,Theory of Computation,TH,4.0
+CSE2007,Database Management Systems,ETL,4.0
+CSE2008,Operating Systems,ETL,4.0
+CSE3003,Computer Networks,ETL,4.0
+CSE3004,Design and Analysis of Algorithms,ETL,4.0
+CSE4004,Web Technologies,ETL,4.0
+ECE1003,Digital Logic Design,ETL,4.0
+ECE2002,Computer Organization and Architecture,TH,4.0
+MAT1003,Discrete Mathematical Structures,TH,4.0
+CSE1006,Foundations for Data Analytics,ETL,3.0
+CSE1007,Introduction to Cryptography,ETL,4.0
+CSE1021,Foundations of Blockchain Technology,TH,3.0
+CSE2003,Requirements Engineering Management,ETP,4.0
+CSE2004,Software Design and Architecture,ETP,4.0
+CSE2009,Soft Computing,ETP,4.0
+CSE2011,Cyber Security and Digital Forensics,ETL,4.0
+CSE2013,Information Theory and Coding,TH,4.0
+CSE2024,Blockchain Architecture Design,ETL,4.0
+CSE2025,AWS Solution Architecture,TH,3.0
+CSE2026,Object Oriented Analysis and Design,ETL,4.0
+CSE3001,Agile Development Process,ETL,4.0
+CSE3002,Artificial Intelligence,TH,3.0
+CSE3006,Data Visualization,ETL,4.0
+CSE3008,Introduction to Machine Learning,ETL,4.0
+CSE3009,NoSQL Databases,ETL,4.0
+CSE3012,Network Security,ETL,4.0
+CSE3013,Secure Group Communications,ETP,4.0
+CSE3015,Natural Language Processing,ETL,4.0
+CSE3019,Software Quality and Reliability,ETP,4.0
+CSE3036,Cryptocurrency Technologies and  Bitcoin,ETP,4.0
+CSE3041,Malware Analysis,ETL,4.0
+CSE4001,Cloud Computing,TH,3.0
+CSE4002,Mobile Application Development,ETL,4.0
+CSE4005,Data Warehousing and Data Mining,ETP,4.0
+CSE4006,Deep Learning,ETP,4.0
+CSE4007,Digital Image Processing,ETL,4.0
+CSE4011,Internet of Things,ETP,4.0
+CSE4012,UI UX User Experience Design,ETL,4.0
+CSE4015,Network and System Administration,ETL,4.0
+CSE4016,Database Administration,ETL,4.0
+CSE4019,Applications of Artificial Intelligence,ETP,4.0
+CSE4031,Web Application Security,ETL,4.0
+CSE4037,Reinforcement Learning,ETP,4.0
+CSE4040,Mining Massive Data Sets,ETL,4.0
+CSE4043,Network Intrusion Detection and Prevention System,ETL,4.0
+INC1001,Juniper Networks - Introduction to the Junos Operating System,PJT,2.0
+INC1002,Juniper Networks - Introduction to Juniper Security,PJT,2.0
+INC1003,Juniper Networks - Introduction to Junos Platform Automation and DevOps,PJT,2.0
+INC1004,Juniper Networks - Juniper Cloud Fundamentals,PJT,2.0
+INC1005,Juniper Networks - Juniper Networks Design Fundamentals,PJT,2.0
+INC1006,Juniper Networks - Juniper's Mist AI Networks,PJT,2.0
+INC1016,RH124  Red Hat System Administration,PJT,2.0
+INC1017,RH134  Red Hat System Administration II,PJT,2.0
+INC1018,RH294  Red Hat Enterprise Linux Automation with Ansible,PJT,2.0
+INC1019,AD183  Red Hat Application Development I: Programming in Java EE,PJT,2.0
+INC1020,CL110   Red Hat OpenStack Administration I: Core Operations for Domain Operators,PJT,2.0
+INC2001,IDS Inc. - Certified Blockchain Developer,PJT,2.0
+INC2039,APSSDC-IES - Data Science,PJT,2.0
+INC2040,Boston IT Solutions - Deep Learning,PJT,2.0
+INC2041,Boston IT Solutions - Machine Learning,PJT,2.0
+INC2042,Boston IT Solutions - Python for Artificial Intelligence,PJT,2.0
+INC2043,Boston IT Solutions - Data Analysis with SQL,PJT,2.0
+INC2044,Boston IT Solutions - Fundamentals of Computer Vision,PJT,2.0
+INC2045,Boston IT Solutions - Fundamentals of Natural Language Processing,PJT,2.0
+INC2046,INC2046,PJT,2.0
+INC2047,PAANCA - Cybersecurity Foundation,PJT,2.0
+INC2048,PAANCA - Network Security Fundamentals,PJT,2.0
+INC2049,PAANCA - Cloud Security Fundamentals,PJT,2.0
+INC2050,PAANCA - Security Operations Fundamentals,PJT,2.0
+INC2051,PAANCA - Enterprise Security Deployment,PJT,2.0
+INC2052,PAANCA - Enterprise Security Management,PJT,2.0
+INC2053,PAANCA - Cloud Security Deployment,PJT,2.0
+INC2054,PAANCA - Security Operations,PJT,2.0
+INC2055,PAANCA - Data Science,PJT,2.0
+INC2061,MongoDB Associate Database Administrator,PJT,2.0
+INC3011,Cloud Computing,PJT,2.0
+INC3012,Digital Marketing Performance Optimization & CRM Tools,PJT,2.0
+INC3013,AI for Management Graduates: Leveraging Artificial Intelligence in Business,PJT,2.0
+INC3014,Project Management and Collaboration,PJT,2.0
+INC3015,Product Management,PJT,2.0
+INC3021,Prompt Engineering,PJT,2.0
+INC3022,Generative AI,PJT,2.0
+INC3023,Quantum computing,PJT,2.0
+INC3024,AutoML,PJT,2.0
+MAT2003,Optimization Techniques,ETL,4.0
+ONL1039,Artificial Intelligence: Concepts and Techniques,OC,3.0
+ONL1040,Cognitions Transformation and Lives,OC,1.0
+ONL1041,Economic Environment and Business Strategy,OC,2.0
+ONL1042,Functional and Conceptual Design,OC,3.0
+ONL1043,Innovation Business Models and Entrepreneurship,OC,2.0
+ONL1044,Introduction To Internet Of Things,OC,3.0
+ONL1045,Software Engineering,OC,3.0
+ONL2055,Business and Sustainable Development,OC,1.0
+ONL2056,Business Japanese and Business Manner,OC,1.0
+ONL2057,Business Marketing - Technology Focus,OC,2.0
+ONL2058,Business to Business Marketing (B2B),OC,3.0
+ONL2059,Design Technology and Innovation,OC,2.0
+ONL2060,Business Analytics & Data Mining Modeling using R Part II,OC,1.0
+ONL2061,Business Analytics & Text Mining Modeling using Python,OC,2.0
+ONL2062,Privacy and Security in Online Security Media,OC,3.0
+ONL2063,Programming with Generative AI,OC,2.0
+ONL2065,Security Analysis & Portfolio Management,OC,3.0
+ONL2066,Mathematical Foundations for Machine Learning,OC,3.0
+ONL2067,Mobile Virtual Reality and Artificial Intelligence,OC,1.0
+ONL3044,Industry 4.0 and Internet of Things,OC,3.0
+ONL3045,Introduction to Machine Learning,OC,2.0
+ONL3046,Machine Learning,OC,2.0
+ONL4023,Computer Vision,OC,3.0
+ONL4024,Deep Learning,OC,3.0
+ONL4025,Legal and Regulatory Compliance for Small and Medium Business Enterprises,OC,2.0
+ONL4026,Machine Learning for Earth System Sciences,OC,2.0
+ONL4027,Machine Learning for Engineering and Science Applications,OC,3.0
+ONL4028,Reinforcement Learning,OC,3.0
+ONL4029,Software Project Management,OC,3.0
+ONL4030,Software Testing,OC,3.0
+ONL4031,System Design for Sustainability,OC,3.0
+TEC4001,Technical Writing and Presentation,PJT,1.0
+EXC1001,Toast Masters Club,ECA,2.0
+EXC1002,Dhwani - Theatre and Fine Arts Club,NCC,2.0
+EXC1003,LIVIT - Health and Wellness Club,ECA,2.0
+EXC1004,Music Club,ECA,2.0
+EXC1005,Sports Club,ECA,2.0
+EXC1006,Uddeshya VIT-AP,NCC,2.0
+EXC1007,Quiz Club,NCC,2.0
+EXC1008,The Gardening Club,ECA,2.0
+EXC1009,MTT IEEE chapter,ECA,2.0
+EXC1010,Comedy Club,NCC,2.0
+EXC1011,Kannada Association,NCC,2.0
+EXC1012,Do It Yourself (DIY) Club,NCC,2.0
+EXC1013,IET Club,NCC,2.0
+EXC1015,Social Entrepreneurship Empowerment and Development Club,ECA,2.0
+EXC1016,Beat the Heat - Dance Club,NCC,2.0
+EXC1017,Run 4 a Cause Club,ECA,2.0
+EXC1018,Adventure Club,ECA,2.0
+EXC1019,Click n Flick Photography Club,NCC,2.0
+EXC1020,Culinary Club,ECA,2.0
+EXC1021,National Service Scheme (NSS) VIT-AP,NCC,2.0
+EXC1022,Indian Classical Music Club,NCC,2.0
+EXC1023,Western Music Club,NCC,2.0
+EXC1024,News Paper club,NCC,2.0
+EXC1025,Sanskriti Club,NCC,2.0
+EXC1026,YouTuber Club,ECA,2.0
+EXC1027,Open Community RUDRA,ECA,2.0
+EXC1028,Clean Campus Club - Swacch VIT-AP,ECA,2.0
+EXC1029,KNIT Club,NCC,2.0
+EXC1030,SPIC MACAY Heritage Club,ECA,2.0
+EXC1031,Telugu Association,NCC,2.0
+EXC1032,Tamil Association,NCC,2.0
+EXC1033,Hindi Association,NCC,2.0
+EXC1034,Malayalam Association,NCC,2.0
+EXC1035,Odia Association,NCC,2.0
+EXC1036,Bengali Association,NCC,2.0
+EXC1037,English Literary Association,NCC,2.0
+EXC1039,Innovators Quest Club,NCC,2.0
+EXC1040,Kalki - Personal Development Club,NCC,2.0
+EXC1041,Mélange - Inspire Attract and Trend Club,ECA,2.0
+EXC1042,MUN Club,NCC,2.0
+EXC1043,Nutrition Club,NCC,2.0
+EXC1044,Youth Empowerment and Skills Slub - (YES+!),ECA,2.0
+EXC1045,Think and Thrive Club,ECA,2.0
+EXC1046,VITonomics Club,ECA,2.0
+EXC1047,Around the World Club,ECA,2.0
+EXC1048,Intelligent and Intuitive AI Club,NCC,2.0
+EXC1049,Torque,NCC,2.0
+EXC1050,Leo Club VITAP,NCC,2.0
+EXC1051,Madhya Bharat Association,NCC,2.0
+EXC1052,MANSI: The Voice of Heart,NCC,2.0
+EXC1053,Dragon Fist Martial Arts Club,NCC,2.0
+EXC1054,American Chemical Society Students Chapter,NCC,2.0
+EXC1055,Data Science Club,NCC,2.0
+EXC1056,Uniquest,NCC,2.0
+EXC1057,Nrityam,NCC,2.0
+EXC1058,Women Innovators Network,NCC,2.0
+EXC1059,Entrepreneurship Club,NCC,2.0
+EXC1060,American Society of Heating Refrigerating and Air-Conditioning Engineers (ASHRAE) Club,NCC,2.0
+EXC1061,CodeCrux VITAP Club,NCC,2.0
+EXC1062,Institution of Engineers India (IEI) - CSE Students Chapter,NCC,2.0
+EXC2001,Milestone Club,NCC,2.0
+EXC2002,CSI - Computer Society of India,NCC,2.0
+EXC2004,Developer Student Clubs by Google,NCC,2.0
+EXC2005,Open Source Community,NCC,2.0
+EXC2006,Android Club,ECA,2.0
+EXC2007,Academic and Industrial Nano Society,ECA,2.0
+EXC2008,Robotics club,ECA,2.0
+EXC2009,Null Chapter - Security and Hacking,NCC,2.0
+EXC2010,Drushya - Animation and Gaming Club,ECA,2.0
+EXC2011,Bulls and Bears,NCC,2.0
+EXC2012,Be a Nerd - BaN Club,NCC,2.0
+EXC2013,Math Club,NCC,2.0
+EXC2014,Nextgen Cloud Club,NCC,2.0
+EXC2015,Marathi Association,NCC,2.0
+EXC2016,Electronics Hobby Club,ECA,2.0
+EXC2017,Spirit of R-Energy Club,ECA,2.0
+EXC2018,ACM Chapter,NCC,2.0
+EXC2019,Students for the Exploration and Development of Space (SEDS),NCC,2.0
+EXC2020,Live Innovate and Transform - Data Analytics Club,NCC,2.0
+EXC2021,Teach Your Machine Club - Machine Learning ( TYMC),NCC,2.0
+EXC2022,Fly Your Ideas (FYI) - Drone Club,ECA,2.0
+EXC2023,The Node: A Blockchain Club,NCC,2.0
+EXC2024,SPARK - The Electric Vehicle Club,ECA,2.0
+EXC2025,Creation Club,ECA,2.0
+EXC2026,Photon Club,NCC,2.0
+EXC2027,IoT Revolution Club,ECA,2.0
+EXC2028,Graphics Processing Unit Users Group (GPUG),NCC,2.0
+EXC2029,CodeChef Club,NCC,2.0
+EXC2030,Microsoft Student Chapter,NCC,2.0
+EXC2031,OASIS VFX and CGI Club,ECA,2.0
+EXC2032,Harmony OS Students Fan Club,ECA,2.0
+EXC2033,SPICMACAY,ECA,2.0
+EXC2034,Renewable Energy Club,NCC,2.0
+EXC2035,Kuge Gamu Clan Club,ECA,2.0
+EXC2036,WiOS-Women in Open Source,NCC,2.0
+EXC2037,Pennify VIT-AP Chapter,ECA,2.0
+EXC2038,Otaku Haven Club,NCC,2.0
+EXC2039,Climate Change Club,NCC,2.0
+EXC2040,MATLAB Chapter,ECA,2.0
+EXC2041,Rotaract Club,NCC,2.0
+EXC2042,BizzDom Club,ECA,2.0
+EXC2043,AI-Based Productivity Tools club,NCC,2.0
+EXC2044,IETE club,NCC,2.0
+EXC2045,The Microwave Maven Club,NCC,2.0
+EXC2046,Udaan The Anchoring club,NCC,2.0
+EXC2047,The Constitution Club,ECA,2.0
+EXC2048,Technopreneur,ECA,2.0
+EXC2049,Geeks for Geeks VITAP Student Chapter,NCC,2.0
+EXC2050,Reverse Class room,ECA,2.0
+EXC2051,Electoral club,NCC,2.0
+EXC2052,Haryana Association,NCC,2.0
+EXC2053,American Chemical Society Student Chapter,ECA,2.0
+EXC2054,The Gamers Crib (TGC),NCC,2.0
+EXC2055,Chhattisgarh Association,NCC,2.0
+EXC2056,Dhruva club,NCC,2.0
+EXC2057,Manthan: The Churn Within,NCC,2.0
+EXC2058,Team Next Nexus,NCC,2.0
+EXC2059,Hult Prize VIT-AP Chapter,NCC,2.0
+EXC2060,MAD - MAke A Difference Club,NCC,2.0
+EXC2062,Hallyu Club (Korean Wave Club),NCC,2.0
+EXC2063,Laetitia - Living Joyful,NCC,2.0
+EXC2064,Bihar Association,NCC,2.0
+EXC2065,Society of Automobile Engg ( SAE) Club,NCC,2.0
+CSE1012,Problem Solving using Python,ETL,4.0
+CSE1022,Introduction to Programming,ETL,3.0
+CSE2001,Data Structures and Algorithms,ETL,4.0
+CSE2005,Object Oriented Programming,ETL,4.0
+ECE1001,Fundamentals of Electrical Engineering,ETL,4.0
+ECE1002,Fundamentals of Electrical and Electronics Engineering,ETL,4.0
+ENG1001,English for Essential Communication,ETL,3.0
+ENG1002,English for Effective Communication,ETL,3.0
+ENG2001,English for Professional Communication,ETL,3.0
+FRL1001,Basic French,TH,2.0
+FRL1004,Basic Spanish,TH,2.0
+FRL1005,German for Beginners,TH,2.0
+FRL2003,French for Engineers,TH,3.0
+FRL2004,Korean for Beginners,TH,2.0
+FRL2005,German for Advanced Learners,TH,3.0
+INL1002,Introduction to Hindi Language and Literature,TH,2.0
+ECS2002,Engineering Clinics - System Design,PJT,2.0
+ECS3001,Engineering Clinics - II,PJT,2.0
+CHY1009,Chemistry and Environmental Studies,ETL,4.0
+MAT1001,Calculus for Engineers,ETL,4.0
+MAT1002,Applications of Differential and Difference Equations,TH,4.0
+MAT1011,Applied Statistics,ETL,4.0
+PHY1006,Physics of Materials,ETL,4.0
+PHY1007,Principles of Electronics,ETL,4.0
+PHY1008,Modern Physics,ETL,4.0
+INC1001,Juniper Networks - Introduction to the Junos Operating System,PJT,2.0
+INC1004,Juniper Networks - Juniper Cloud Fundamentals,PJT,2.0
+INC1005,Juniper Networks - Juniper Networks Design Fundamentals,PJT,2.0
+INC1006,Juniper Networks - Juniper's Mist AI Networks,PJT,2.0
+INC1007,Entuple - Synthesis and Static Timing Analysis,PJT,2.0
+INC1008,Entuple - Physical Design,PJT,2.0
+INC1012,Smart Bridge - Artificial Intelligence,PJT,2.0
+INC1022,AWS Certified Solutions Architect - Associate,PJT,2.0
+INC1026,MERN Full StackQ,PJT,2.0
+INC1029,VLSI Design Internship,PJT,2.0
+INC1038,JAVA Full stack,PJT,2.0
+INC1043,Oracle Java Foundation Associate,PJT,2.0
+INC1044,Android App Development,PJT,2.0
+INC1045,Automation Anywhere University Certified Essentials RPA Professional,PJT,2.0
+INC2001,IDS Inc. - Certified Blockchain Developer,PJT,2.0
+INC2003,NASSCOM - Big Data Foundation,PJT,2.0
+INC2014,Oracle Cloud Infrastructure Foundations Associate,PJT,2.0
+INC2015,Oracle Machine Learning Data Scientist,PJT,2.0
+INC2016,Oracle - Java SE Developer,PJT,2.0
+INC2017,AWS - Cloud Practitioner - Foundation,PJT,2.0
+INC2018,AWS - Solution Architect - Associate,PJT,2.0
+INC2021,Microsoft - Azure AI Fundamentals,PJT,2.0
+INC2022,Microsoft - Azure AI Engineer,PJT,2.0
+INC2031,Maven Silicon - VLSI,PJT,2.0
+INC2035,IBM - Artificial Intelligence,PJT,2.0
+INC2042,Boston IT Solutions - Python for Artificial Intelligence,PJT,2.0
+INC2043,Boston IT Solutions - Data Analysis with SQL,PJT,2.0
+INC2057,Digital Forensics Essentials,PJT,2.0
+INC2060,Adobe UX & UI,PJT,2.0
+INC2061,MongoDB Associate Database Administrator,PJT,2.0
+INC2062,High Performance Coding - Advanced Data Structures & Algorithms using Java,PJT,2.0
+INC2065,Embedded System Design Internship,PJT,2.0
+INC2066,DP 900 - Microsoft Azure Data Fundamentals Exam,PJT,2.0
+INC2070,Generative AI Applications using Vertex AI in Collaboration with Google,PJT,2.0
+INC2072,AI 900- Microsoft Azure AI Fundamentals Exam,PJT,2.0
+INC2075,Hedera Developer - IDS,PJT,2.0
+INC3001,Full stack Development with MERN,PJT,2.0
+INC3002,Data Science & Business Analytics,PJT,2.0
+INC3003,Embedded Systems and IoT,PJT,2.0
+INC3004,Data Analytics & Big Data Fundamentals,PJT,2.0
+INC3005,Cyber Security and Ethical Hacking,PJT,2.0
+INC3006,UI/UX Developer,PJT,2.0
+INC3007,Devops,PJT,2.0
+INC3008,Gen AI and Chat GPT,PJT,2.0
+INC3011,Cloud Computing,PJT,2.0
+INC3014,Project Management and Collaboration,PJT,2.0
+INC3020,Investment Banking Operations and Management,PJT,2.0
+INC3022,Generative AI,PJT,2.0
+INC3023,Quantum computing,PJT,2.0
+INC3025,IBM - Blockchain,PJT,2.0
+INC3026,IBM - Cyber Security,PJT,2.0
+INC3027,IBM - Devops Agile and Design Thinking,PJT,2.0
+INC3028,IBM - Gen AI,PJT,2.0
+INC3029,EC-Council Certified Cloud Security Engineer,PJT,2.0
+INC3030,VLSI Design and Verification Certification Program,PJT,2.0
+INC3031,Microsoft Certified Professional (MCP) - AI102- Azure AI engineer Associate,PJT,2.0
+INC3032,Modern Web Development with MERN Stack,PJT,2.0
+INC3033,Problem Solvers: Mastering Data Structures & Algorithms with Leetcode,PJT,2.0
+INC3034,IAMNEO - Java Full-Stack Developer,PJT,2.0
+INC3035,IAMNEO - Angular Front-End Developer,PJT,2.0
+INC3036,IMARTICUS - Full Stack Development,PJT,2.0
+INC3037,IMARTICUS - Android Development,PJT,2.0
+INC3038,L&T EduTech - Certificate in Collaborative Robotics in Manufacturing,PJT,2.0
+INC3039,L&T EduTech - Certificate in Design and Procurement Strategy of Process Plant Utilities,PJT,2.0
+INC3040,L&T EduTech - Certificate in Heavy Manufacturing Technology,PJT,2.0
+INC3041,L&T EduTech - Certificate in Industrial Applications of Microcontrollers - A Practice Based Approach,PJT,2.0
+INC3042,L&T EduTech - Certificate in Industrial IoT Architecture & Applications,PJT,2.0
+INC3043,L&T EduTech - Certificate in Industrial Piping Design and Dynamics,PJT,2.0
+INC3044,L&T EduTech - Certificate in Sustainability for Construction Projects,PJT,2.0
+INC3045,L&T EduTech - Certificate in Thermo-Mechanical Design and Simulation of Process Equipment,PJT,2.0
+INC3046,L&T EduTech - Certificate in VLSI Chip Design and Simulation for Industrial Applications,PJT,2.0
+INC3047,Maven Silicon - Design Internship,PJT,2.0
+INC3048,Maven Silicon - Embedded System Design Internship,PJT,2.0
+INC3049,Oracle - Java developer - Professional (OCP),PJT,2.0
+INC3050,SIX PHRASE - Internet of Things,PJT,2.0
+INC3051,Smartbridge - ServiceNow Admin & Developer in Partnership with ServiceNow,PJT,2.0
+INC3052,Smartbridge - Artificial Intelligence in Partnership with Google,PJT,2.0
+INC3053,Smartbridge - Generative AI in Partnership with Google,PJT,2.0
+INC3054,Smartbridge - Machine Learning in Partnership with Google,PJT,2.0
+INC3055,IBM - Cloud Fundamentals,PJT,2.0
+INC3056,EC- Council IoT Security Essentials,PJT,2.0
+INC3057,AWS Certified AI Practitioner,PJT,2.0
+INC3058,AWS Certified Machine Learning Engineer - Associate,PJT,2.0
+INC3059,AWS Certified Data Engineer - Associate,PJT,2.0
+INC3060,AWS Certified Solutions Architect - Associate Certification Program,PJT,2.0
+INC3061,Microsoft Certified Fundamental (DP-900),PJT,2.0
+INC3062,Microsoft Certified Fundamental (SC-900),PJT,2.0
+INC3063,IAMNEO - Data Science with Python,PJT,2.0
+INC3064,IAMNEO Certified MERN Stack Developer,PJT,2.0
+INC3065,L&T EduTech - Certificate in AI & Edge Computing for Industry Applications,PJT,2.0
+INC3066,L&T EduTech - Certificate in New Upstream Technologies with AI,PJT,2.0
+INC3067,L&T EduTech - Certificate in Renewable Energy Technologies with AI Applications,PJT,2.0
+INC3068,L&T EduTech - Certificate in Substation Engineering: Design and Digital Concepts,PJT,2.0
+INC3069,Oracle - Database Development - APEX,PJT,2.0
+INC3070,Smartbridge - Salesforce Developer in Partnership with Salesforce,PJT,2.0
+INC3071,Oracle - Generative AI,PJT,2.0
+INC3072,Salesforce Cloud,PJT,2.0
+SIT1001,Summer Internship,PJT,2.0
+MGT1001,Ethics and Values,LO,2.0
+MGT1040,Entrepreneurship,TH,2.0
+STS1004,Introduction to Problem Solving,TH,3.0
+STS1009,Introduction to Quantitative Logical and Verbal Ability,TH,3.0
+STS2008,Numerical Ability and Cognitive Intelligence,TH,3.0
+STS2009,Arithmetic Problem Solving Skills,TH,3.0
+CHY1005,Industrial Chemistry for Engineers,TH,3.0
+CHY1006,Corrosion Science and Engineering,TH,3.0
+CHY1007,Energy Materials and Their Applications,TH,3.0
+CHY2001,Chemical and Biosensors,TH,3.0
+CHY2002,Organic Electronics,TH,3.0
+ECE2005,Signals and Systems,TH,4.0
+ECE3018,IoT Fundamentals,ETLP,4.0
+ECE4004,Automotive Electrical and Electronic Systems,TH,4.0
+ENG1017,Film Appreciation,TH,3.0
+ENG1018,Introduction to Fashion and Technology,TH,3.0
+ENG2011,Revisiting Shakespearean Dramas,TH,3.0
+ENG2013,Cross-Cultural Communication Skills for Global Interaction,TH,3.0
+ENG2014,Decoding Television in the Digital Age,TH,3.0
+ENG2015,Health and Indian Cinema,TH,3.0
+ENG3004,Introducing Linguistics,TH,2.0
+FRL1004,Basic Spanish,TH,2.0
+FRL2005,German for Advanced Learners,TH,3.0
+HUM1012,Engineering Economics,TH,3.0
+HUM2011,Social Economics,TH,3.0
+HUM2014,Introduction of French Theatre from Classics to Contemporary,TH,2.0
+LAW1008,Intellectual Property Rights for Engineers,TH,3.0
+LAW1013,Energy Law and Sustainability,TH,3.0
+LIB1007,Gender Studies - An Introduction,TH,2.0
+LIB1011,Introduction to Social Inequalities,TH,3.0
+LIB1014,Pursuit of Happiness,TH,3.0
+LIB1016,Theory of Performance and Practice,TH,4.0
+LIB1019,Dynamics of Gender Psychology,TH,3.0
+LIB1020,Basic Psychology for Engineers,TH,3.0
+LIB2003,Geography of Asia and Sub-Saharan Africa,TH,3.0
+LIB2006,Critical Thinking and Formal Logic,TH,3.0
+LIB2007,The Aesthetics of Performing Arts,TH,4.0
+LIB2010,Food & Literature,TH,3.0
+LIB2015,Design Psychology,TH,3.0
+LIB2018,Indian National Movement,TH,4.0
+LIB2019,Water and Society,TH,3.0
+LIB2020,Technology Society and Political Systems,TH,3.0
+LIB2023,Constitution of India: Formation and Implementation,TH,4.0
+LIB3001,Applications of Moral Philosophy,TH,3.0
+MAT2001,Numerical Methods for Engineers,ETL,3.0
+MAT2005,Linear Algebra,TH,3.0
+MAT2011,Graph Theory and Applications,TH,3.0
+MEC1008,Engineering Mechanics,TH,3.0
+MGT1015,Fundamentals of Consumer Behaviour,ETP,4.0
+MGT1023,Fundamentals of Human Resource Management,ETP,4.0
+MGT1027,Fundamentals of Team Building and Leadership,TH,3.0
+MGT1109,Management Accounting,ETP,4.0
+MGT2006,Fundamentals of Financial Management,ETP,4.0
+MGT2014,Fundamentals of Marketing Management,TH,3.0
+PHY2003,Condensed Matter Physics,TH,3.0
+PHY2004,Optoelectronics,TH,3.0
+PHY2005,Introduction to Nanotechnology,TH,3.0
+PHY2006,Solar Photovoltaics : Fundamentals and Technologies,TH,3.0
+STS3007,Advanced Competitive Coding - I,TH,3.0
+STS4006,Advanced Competitive Coding - II,TH,3.0
+CAP4001,Capstone,PJT,6.0
+BIC4002,Industrial Internship/Senior Design Project,PJT,12.0
