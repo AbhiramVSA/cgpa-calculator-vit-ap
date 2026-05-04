@@ -69,11 +69,14 @@ function groupBySemester(courses: Course[]) {
 }
 
 async function fetchCoursesForSuggestion(path: string='courses.csv') {
-    const response = await fetch(path)
-    const data = await response.text()
     let courses: courseSuggestion[] = []
-    try{
-        const courses: courseSuggestion[] = data
+    try {
+        const response = await fetch(path)
+        if (!response.ok) {
+            throw new Error(`HTTP error while fetching ${path} : ${response.status}`)
+        }
+        const data = await response.text()
+        courses = data
             .split('\n')
             .slice(1)
             .map((line) => {
@@ -87,10 +90,10 @@ async function fetchCoursesForSuggestion(path: string='courses.csv') {
                 }
             })
             .filter(c => c.course_code) // remove empty lines
-        return courses
     } catch (error) {
-        console.error("Error parsing courses data:", error)
+        console.error("Error obtaing or parsing courses data:", error)
     }
+    return courses
 }
 
 async function encodeBase64Gzip(input:string) {
@@ -142,7 +145,8 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
 
     useEffect(() => {
         const encUrl = window.location.href
-        const decUrl = encUrl.split("data=")[0] + "data=" + decodeURIComponent(encUrl.split("data=")[1])
+        const paramData = decodeURIComponent(encUrl.split("data=")[1]).replaceAll('/','_').replaceAll('+','-')
+        const decUrl = encUrl.split("data=")[0] + "data=" + paramData
         setNewEncodedString(decUrl)
         fetchCoursesForSuggestion().then((data) => {
             if (data) setCourseSuggestionList(data)
@@ -262,7 +266,7 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
         })
         const newEncStr = await encodeBase64Gzip(JSON.stringify(updatedData))
         setNewEncodedString((prev) => {
-            return prev.split("data=")[0] + "data=" + newEncStr
+            return prev.split("data=")[0] + "data=" + newEncStr.replaceAll('/','_').replaceAll('+','-')
         })
     }
 
@@ -275,11 +279,15 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
 
     const writeToClipboard = async (text: string) => {
         try {
-            await navigator.clipboard.writeText(text)
-            alert("Text copied to clipboard!")
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+                alert("Text copied to clipboard!");
+            } else {
+                alert("Clipboard API is not supported in this browser.");
+            }
         } catch (err) {
-            console.error("Failed to copy: ", err)
-            alert("Failed to copy text. Please try again.")
+            console.error("Failed to copy:", err);
+            alert("Failed to copy text. Please try again.");
         }
     }
 
@@ -287,10 +295,7 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
         writeToClipboard(JSON.stringify(data))
     }
     const handleCopyURL = () => {
-        console.log("Encoded URL : ",newEncodedString)
-        const paramData = newEncodedString.split('data=')[1].replaceAll('/','_').replaceAll('+','-')
-        const modfiedUrl = newEncodedString.split('data=')[0] + "data=" + paramData
-        writeToClipboard(modfiedUrl)
+        writeToClipboard(newEncodedString)
     }
     const handleCopyEncString = () => {
         writeToClipboard(newEncodedString.split('data=')[1])
@@ -712,13 +717,17 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
                         </Button>
                     </Card>
             </div>
-            <div className="mt-6 grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-4 sm:gap-6 md:grid-cols-3">
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-sm font-medium text-muted-foreground">Updated URL</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-end justify-between">
-                        <span className="text-sm font-semibold truncate max-w-[250px]">{newEncodedString}</span>
+                    <CardContent className="flex items-center gap-3">
+                        <Input
+                            id="copy-url"
+                            placeholder="URL"
+                            value={newEncodedString} readOnly
+                        />
                         <div className="text-right text-sm text-muted-foreground">
                             <Button size="sm" onClick={() => handleCopyURL()}>
                                 Copy
@@ -730,8 +739,12 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
                 <CardHeader>
                         <CardTitle className="text-sm font-medium text-muted-foreground">Encoded Data</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-end justify-between">
-                        <span className="text-sm font-semibold truncate max-w-[250px]">{newEncodedString.split("data=")[1]}</span>
+                    <CardContent className="flex items-center gap-3">
+                        <Input
+                            id="copy-encoded-data"
+                            placeholder="Encoded Data"
+                            value={newEncodedString.includes("=") ? newEncodedString.split("data=")[1] : ""} readOnly
+                        />
                         <div className="text-right text-sm text-muted-foreground">
                             <Button size="sm" onClick={() => handleCopyEncString()}>
                                 Copy
@@ -743,8 +756,12 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
                 <CardHeader>
                         <CardTitle className="text-sm font-medium text-muted-foreground">Data JSON</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-end justify-between">
-                        <span className="text-sm font-semibold truncate max-w-[250px]">{JSON.stringify(data)}</span>
+                    <CardContent className="flex items-center gap-3">
+                        <Input
+                            id="copy-url"
+                            placeholder="URL"
+                            value={data ? JSON.stringify(data) : ""} readOnly
+                        />
                         <div className="text-right text-sm text-muted-foreground">
                             <Button size="sm" onClick={() => handleCopyJson()}>
                                 Copy
