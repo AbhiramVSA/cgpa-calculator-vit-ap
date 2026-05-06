@@ -1,12 +1,14 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Award, BookOpen, Calendar, ExternalLink, Printer, RefreshCcw, Smartphone, Star } from "lucide-react"
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, PieChart, Pie, Cell } from "recharts"
 import type { Course as ImportedCourse } from "@/lib/decodePayload"
+import { encodePayload } from "@/lib/encodePayload" 
+import { Input } from "../ui/input"
 
 type Course = ImportedCourse
 
@@ -16,6 +18,20 @@ export interface StudentData {
     credits_earned: number
     cgpa: number
     courses: Course[]
+}
+
+export interface newSemester {
+    month: string,
+    year: string,
+    courses: Course[],
+    gpa: number
+}
+
+type courseSuggestion = {
+    course_code: string,
+    course_title: string,
+    course_type: string,
+    credits: number
 }
 
 const gradePoints: Record<string, number> = {
@@ -53,8 +69,78 @@ function groupBySemester(courses: Course[]) {
     return semesters.map((s) => ({ semester: s, courses: map.get(s)!, gpa: calculateSemesterGPA(map.get(s)!) }))
 }
 
+async function fetchCoursesForSuggestion(path: string='courses.csv') {
+    let courses: courseSuggestion[] = []
+    try {
+        const response = await fetch(path)
+        if (!response.ok) {
+            throw new Error(`HTTP error while fetching ${path} : ${response.status}`)
+        }
+        const data = await response.text()
+        courses = data
+            .split('\n')
+            .slice(1)
+            .map((line) => {
+                const [course_code, course_title, course_type, credits] = line.split(',')
+
+                return {
+                    course_code: course_code?.trim(),
+                    course_title: course_title?.trim(),
+                    course_type: course_type?.trim(),
+                    credits: Number(credits)
+                }
+            })
+            .filter(c => c.course_code) // remove empty lines
+    } catch (error) {
+        console.error("Error obtaing or parsing courses data:", error)
+    }
+    return courses
+}
+
 export function InteractiveReport({ initial }: { initial: StudentData }) {
     const [data, setData] = useState<StudentData>(initial)
+
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const currentYear = new Date().getFullYear()
+    const years = [currentYear - 1, currentYear, currentYear + 1]
+
+    const [newSemester, setNewSemester] = useState<newSemester>({
+        month: months[new Date().getMonth()],
+        year: String(currentYear),
+        courses: [],
+        gpa: 0
+    })
+
+    const [courseCounter,setCourseCounter] = useState(417)
+
+    const [newCourse, setNewCourse] = useState<Course>({
+        id: courseCounter,
+        course_code: "",
+        course_title: "",
+        course_type:"",
+        credits:0,
+        grade:"P",
+        exam_month:"",
+        course_distribution: "UE"
+    })
+
+    const [courseSuggestionList, setCourseSuggestionList] = useState<courseSuggestion[]>([])
+
+    useEffect(() => {
+        const encUrl = window.location.href
+        const paramData = decodeURIComponent(encUrl.split("data=")[1]).replaceAll('/','_').replaceAll('+','-')
+        const decUrl = encUrl.split("data=")[0] + "data=" + paramData
+        setNewEncodedString(decUrl)
+        fetchCoursesForSuggestion().then((data) => {
+            if (data) setCourseSuggestionList(data)
+        })
+    }, [])
+
+    const [filteredCourses, setFilteredCourses] = useState<courseSuggestion[]>([])
+
+    const [showCCodeSuggestions, setShowCCodeSuggestions] = useState(false)
+    const [showCNameSuggestions, setShowCNameSuggestions] = useState(false)
+    const [newEncodedString, setNewEncodedString] = useState('')
 
     const semesters = useMemo(() => groupBySemester(data.courses), [data.courses])
     const overall = useMemo(() => {
@@ -101,6 +187,101 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
             ...prev,
             courses: prev.courses.map((c) => (c.id === courseId ? { ...c, grade: newGrade } : c)),
         }))
+    }
+
+    const handleCourseTitleChange = (value: string) => {
+        setNewCourse((prev) => ({ ...prev, course_title: value }))
+        setFilteredCourses(courseSuggestionList.filter(c => c.course_title.toLowerCase().includes(value.toLowerCase())))
+    }
+    const handleCourseCodeChange = (value: string) => {
+        setNewCourse((prev) => ({ ...prev, course_code: value }))
+        setFilteredCourses(courseSuggestionList.filter(c => c.course_code.toLowerCase().includes(value.toLowerCase())))
+    }
+    
+    const changeGradeNewSemester = (courseId: number, newGrade: string) => {
+        setNewSemester((prev) => {
+            const updatedCourses = prev.courses.map((c) => (c.id === courseId ? { ...c, grade: newGrade } : c))
+            return { ...prev, courses: updatedCourses, gpa: calculateSemesterGPA(updatedCourses) }
+        })
+    }
+
+    const addNewCourseToSemester = () => {
+        console.log("Adding course", newCourse)
+        console.log("To semester", newSemester)
+        setNewSemester((prev) => {
+            const updatedCourses = [...prev.courses, newCourse]
+            return { ...prev, courses: updatedCourses, gpa: calculateSemesterGPA(updatedCourses) }
+        })
+        setCourseCounter((oldId) => {
+            setNewCourse({
+                id: oldId + 1,
+                course_code: "",
+                course_title: "",
+                course_type:"",
+                credits:0,
+                grade:"P",
+                exam_month:"",
+                course_distribution: "UE"
+            })
+        return oldId + 1
+        })
+        setFilteredCourses([])
+    }
+
+    const addNewSemesterToData  = async () => {
+        const semString = `${newSemester.month}-${newSemester.year}`
+        let courseIdCounter = data.courses.length + 1
+        const coursesWithSem = newSemester.courses.map(c => ({ ...c, id: courseIdCounter++, exam_month: semString }))
+        const newCredits = coursesWithSem.reduce((s, c) => s + Number(c.credits), 0)
+        const newEarned = coursesWithSem.filter(c => c.grade !== "F").reduce((s, c) => s + Number(c.credits), 0)
+        const updatedData = {
+            ...data,
+            credits_registered: data.credits_registered + newCredits,
+            credits_earned: data.credits_earned + newEarned,
+            courses: [...data.courses, ...coursesWithSem]
+        }
+        setData(updatedData)
+        setNewSemester({
+            month: months[new Date().getMonth()],
+            year: String(currentYear),
+            courses: [],
+            gpa: 0
+        })
+        const newEncStr = await encodePayload(JSON.stringify(updatedData))
+        setNewEncodedString((prev) => {
+            return prev.split("data=")[0] + "data=" + newEncStr.replaceAll('/','_').replaceAll('+','-')
+        })
+    }
+
+    const removeCourseFromNewSemester = (courseId: number) => {
+        setNewSemester((prev) => {
+            const updatedCourses = prev.courses.filter((c) => c.id !== courseId)
+            return { ...prev, courses: updatedCourses, gpa: calculateSemesterGPA(updatedCourses) }
+        })
+    }
+
+    const writeToClipboard = async (text: string) => {
+        try {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(text);
+                alert("Text copied to clipboard!");
+            } else {
+                alert("Clipboard API is not supported in this browser.");
+            }
+        } catch (err) {
+            console.error("Failed to copy:", err);
+            alert("Failed to copy text. Please try again.");
+        }
+    }
+
+    const handleCopyJson = () => {
+        writeToClipboard(JSON.stringify(data))
+    }
+    const handleCopyURL = () => {
+        writeToClipboard(newEncodedString)
+    }
+    const handleCopyEncString = () => {
+        writeToClipboard(newEncodedString.split('data=')[1])
     }
 
     const reset = () => setData(initial)
@@ -301,6 +482,276 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
                         </CardContent>
                     </Card>
                 ))}
+                <Card key="newSemester" className="overflow-hidden">
+                        <CardHeader className="bg-muted/40">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary ring-1 ring-primary/20">
+                                        <Calendar className="h-5 w-5" />
+                                    </span>
+                                    <div>
+                                        <div className="font-semibold flex items-center gap-2">
+                                            <Select value={newSemester.month} onValueChange={(v) => setNewSemester((s) => ({ ...s, month: v }))}>
+                                                        <SelectTrigger size="sm" className="mx-auto">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {(months).map((month) => (
+                                                                <SelectItem key={month} value={month}>
+                                                                    {month}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>-<Select value={newSemester.year} onValueChange={(v) => setNewSemester((s) => ({ ...s, year: v }))}>
+                                                        <SelectTrigger size="sm" className="mx-auto">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {(years).map((year) => (
+                                                                <SelectItem key={year} value={year.toString()}>
+                                                                    {year}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                        </div>
+                                        <div className="text-xs text-muted-foreground">{newSemester.courses.length} courses</div>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-2xl font-semibold">{newSemester.gpa.toFixed(2)}</div>
+                                    <div className="text-xs text-muted-foreground">Semester GPA</div>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <div className="overflow-x-auto">
+                                <table className="w-full border-separate border-spacing-0">
+                                    <thead>
+                                        <tr className="border-b bg-muted/40">
+                                            <th className="text-left p-3 text-xs font-medium uppercase tracking-wide">Course</th>
+                                            <th className="text-left p-3 text-xs font-medium uppercase tracking-wide">Title</th>
+                                            <th className="text-center p-3 text-xs font-medium uppercase tracking-wide">Type</th>
+                                            <th className="text-center p-3 text-xs font-medium uppercase tracking-wide">Credits</th>
+                                            <th className="text-center p-3 text-xs font-medium uppercase tracking-wide">Grade</th>
+                                            <th className="text-center p-3 text-xs font-medium uppercase tracking-wide">Add/Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr key="newCourse" className="border-b hover:bg-muted/30">
+                                                <td className="p-3 font-medium text-primary">
+                                                    <Input
+                                                            id="course-title"
+                                                            placeholder="CSE1008"
+                                                            value={newCourse.course_code}
+                                                            onFocus={() => setShowCCodeSuggestions(true)}
+                                                            onChange={(e) => handleCourseCodeChange(e.target.value)}
+                                                            onBlur={() => setShowCCodeSuggestions(false)}
+                                                        />
+                                                        {showCCodeSuggestions && filteredCourses.length > 0 && (
+                                                                <div className="mx-auto w-full rounded-md border shadow-md max-h-40 overflow-auto">
+                                                                {filteredCourses.map((course, index) => (
+                                                                    <div
+                                                                    key={`${course.course_code}-${index}`}
+                                                                    className="px-3 py-2 dark:hover:bg-input/50 hover:bg-white cursor-pointer"
+                                                                    onMouseDown={() => {
+                                                                        setNewCourse((p) => ({
+                                                                        ...p,
+                                                                        course_code: course.course_code,
+                                                                        course_title: course.course_title,
+                                                                        course_type: course.course_type,
+                                                                        credits: course.credits,
+                                                                        }))
+                                                                        setShowCCodeSuggestions(false)
+                                                                    }}
+                                                                    >
+                                                                    <div className="font-medium">{course.course_code}</div>
+                                                                    <div className="text-xs text-gray-500">{course.course_title}</div>
+                                                                    </div>
+                                                                ))}
+                                                                </div>
+                                                            )}
+                                                </td>
+                                                <td className="p-3 font-medium text-primary">
+                                                    <div className="font-medium leading-tight">
+                                                            <Input
+                                                                id="course-title"
+                                                                placeholder="Introduction to Programming"
+                                                                value={newCourse.course_title}
+                                                                onFocus={() => setShowCNameSuggestions(true)}
+                                                                onChange={(e) => handleCourseTitleChange(e.target.value)}
+                                                                onBlur={() => setShowCNameSuggestions(false)}
+                                                            />
+                                                            {showCNameSuggestions && filteredCourses.length > 0 && (
+                                                                <div className="mx-auto rounded-md border shadow-md max-h-40 overflow-auto">
+                                                                {filteredCourses.map((course, index) => (
+                                                                    <div
+                                                                    key={`${course.course_code}-${index}`}
+                                                                    className="px-3 py-2 dark:hover:bg-input/50 hover:bg-white cursor-pointer"
+                                                                    onMouseDown={() => {
+                                                                        setNewCourse((p) => ({
+                                                                        ...p,
+                                                                        course_code: course.course_code,
+                                                                        course_title: course.course_title,
+                                                                        course_type: course.course_type,
+                                                                        credits: course.credits,
+                                                                        }))
+                                                                        setShowCNameSuggestions(false)
+                                                                    }}
+                                                                    >
+                                                                    <div className="font-medium">{course.course_title}</div>
+                                                                    <div className="text-xs text-gray-500">{course.course_code}</div>
+                                                                    </div>
+                                                                ))}
+                                                                </div>
+                                                            )}
+                                                    </div>
+                                                </td>
+                                                <td className="p-3 text-center text-sm text-muted-foreground">
+                                                    <Select value={newCourse.course_type} onValueChange={(v) => setNewCourse((s) => ({ ...s, course_type: v }))}>
+                                                        <SelectTrigger size="sm" className="mx-auto">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {(["OC","LO","NCC","ECA","ETP","TH","ETL","PJT"] as const).map((type) => (
+                                                                <SelectItem key={type} value={type}>
+                                                                    {type}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </td>
+                                                <td className="p-3 text-center font-mono">
+                                                    <Input
+                                                        id="credits"
+                                                        type="number"
+                                                        step="0.5"
+                                                        min="0.5"
+                                                        max="12"
+                                                        placeholder="3"
+                                                        value={newCourse.credits}
+                                                        onChange={(e) => setNewCourse((p: any) => ({ ...p, credits: e.target.value }))}
+                                                    />
+                                                </td>
+                                                <td className="p-3 text-center">
+                                                    <Select value={newCourse.grade} onValueChange={(v) => setNewCourse((p: any) => ({ ...p, grade: v }))}>
+                                                        <SelectTrigger size="sm" className="mx-auto">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {(["S", "A", "B", "C", "D", "E", "F", "P"] as const).map((g) => (
+                                                                <SelectItem key={g} value={g}>
+                                                                    {g} {g === "P" ? "(Pass)" : `(${gradePoints[g]})`}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </td>
+                                                <td className="p-3 text-center font-mono">
+                                                    <Button
+                                                        onClick={addNewCourseToSemester}
+                                                        className="flex-1"
+                                                        disabled={!newCourse.course_title.trim() || !newCourse.credits || !newCourse.grade}
+                                                        >+
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        {newSemester.courses.map((c) => (
+                                            <tr key={c.id} className="border-b hover:bg-muted/30">
+                                                <td className="p-3 font-medium text-primary">{c.course_code}</td>
+                                                <td className="p-3">
+                                                    <div className="font-medium leading-tight">{c.course_title}</div>
+                                                    <div className="text-xs text-muted-foreground">{c.course_distribution}</div>
+                                                </td>
+                                                <td className="p-3 text-center text-sm text-muted-foreground">{c.course_type}</td>
+                                                <td className="p-3 text-center font-mono">{c.credits}</td>
+                                                <td className="p-3 text-center">
+                                                    <Select value={c.grade} onValueChange={(v) => changeGradeNewSemester(c.id, v)}>
+                                                        <SelectTrigger size="sm" className="mx-auto">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {(["S", "A", "B", "C", "D", "E", "F", "P"] as const).map((g) => (
+                                                                <SelectItem key={g} value={g}>
+                                                                    {g} {g === "P" ? "(Pass)" : `(${gradePoints[g]})`}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </td>
+                                                <td className="p-3 text-center font-mono">
+                                                    <Button
+                                                        onClick={() => removeCourseFromNewSemester(c.id)}
+                                                        className="flex-1 bg-red-500 hover:bg-red-400 text-white"
+                                                        >-
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </CardContent>
+                        <Button
+                            onClick={addNewSemesterToData}
+                            className="mx-auto mb-4"
+                            disabled={newSemester.courses.length==0}
+                            >Push
+                        </Button>
+                    </Card>
+            </div>
+            <div className="mt-6 grid gap-4 sm:gap-6 md:grid-cols-3">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Updated URL</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex items-center gap-3">
+                        <Input
+                            id="copy-url"
+                            placeholder="URL"
+                            value={newEncodedString} readOnly
+                        />
+                        <div className="text-right text-sm text-muted-foreground">
+                            <Button size="sm" onClick={() => handleCopyURL()}>
+                                Copy
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                <CardHeader>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Encoded Data</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex items-center gap-3">
+                        <Input
+                            id="copy-encoded-data"
+                            placeholder="Encoded Data"
+                            value={newEncodedString.includes("=") ? newEncodedString.split("data=")[1] : ""} readOnly
+                        />
+                        <div className="text-right text-sm text-muted-foreground">
+                            <Button size="sm" onClick={() => handleCopyEncString()}>
+                                Copy
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                <CardHeader>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Data JSON</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex items-center gap-3">
+                        <Input
+                            id="copy-url"
+                            placeholder="URL"
+                            value={data ? JSON.stringify(data) : ""} readOnly
+                        />
+                        <div className="text-right text-sm text-muted-foreground">
+                            <Button size="sm" onClick={() => handleCopyJson()}>
+                                Copy
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )
