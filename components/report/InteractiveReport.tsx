@@ -559,7 +559,7 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
                                                 <td className="p-3 font-medium text-primary">
                                                     <Input
                                                             id="course-title"
-                                                            placeholder="1008"
+                                                            placeholder="CSE1008"
                                                             value={newCourse.course_code}
                                                             onFocus={() => setShowCCodeSuggestions(true)}
                                                             onChange={(e) => handleCourseCodeChange(e.target.value)}
@@ -630,7 +630,7 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            {(["LO","NCC","ECA","ETP","TH","ETL","PJT"] as const).map((type) => (
+                                                            {(["OC","LO","NCC","ECA","ETP","TH","ETL","PJT"] as const).map((type) => (
                                                                 <SelectItem key={type} value={type}>
                                                                     {type}
                                                                 </SelectItem>
