@@ -194,12 +194,21 @@ function CGPACalculatorContent() {
   }
 
   const handleAutomatedImport = async (value?: string) => {
-    const toProcess = (value ?? encodedData).trim()
+    let toProcess = (value ?? encodedData).trim()
     if (!toProcess) return
     setIsLoading(true)
     setImportError(null)
     setImportSuccess(false)
     try {
+      // This helps when users paste either a regular URL or an encoded URL
+      // https://cgpa-calculator-vitap.vercel.app/report?data=H4sIAAAAAAAA.....
+      // H4sIAAAAAAAAA72YW3PaOhDH38%2Bn0PC   ← URL Encoded
+      // H4sIAAAAAAAAA72YW3PaOhDH38+n0PC    ← Decoded
+      if (toProcess.startsWith("http") && toProcess.includes("data=")){
+          toProcess = decodeURIComponent(toProcess.split("data=")[1])
+      }
+      // Handle both normal and URI-encoded data
+      toProcess = decodeURIComponent(toProcess)
       const decoded = decodePayload(toProcess) as StudentData
       if (!decoded.courses || !Array.isArray(decoded.courses))
         throw new Error("Invalid data structure - missing courses array")
