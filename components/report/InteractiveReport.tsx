@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Award, BookOpen, Calendar, ExternalLink, Printer, RefreshCcw, Smartphone, Star } from "lucide-react"
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, PieChart, Pie, Cell } from "recharts"
 import type { Course as ImportedCourse } from "@/lib/decodePayload"
+import { encodePayload } from "@/lib/encodePayload" 
 import { Input } from "../ui/input"
 
 type Course = ImportedCourse
@@ -94,24 +95,6 @@ async function fetchCoursesForSuggestion(path: string='courses.csv') {
         console.error("Error obtaing or parsing courses data:", error)
     }
     return courses
-}
-
-async function encodeBase64Gzip(input:string) {
-    const encoder = new TextEncoder()
-    const data = encoder.encode(input)
-
-    const cs = new CompressionStream('gzip')
-    const writer = cs.writable.getWriter()
-    writer.write(data)
-    writer.close()
-
-    const compressed = await new Response(cs.readable).arrayBuffer()
-
-    const base64 = btoa(
-        String.fromCharCode(...new Uint8Array(compressed))
-    )
-
-    return base64
 }
 
 export function InteractiveReport({ initial }: { initial: StudentData }) {
@@ -264,7 +247,7 @@ export function InteractiveReport({ initial }: { initial: StudentData }) {
             courses: [],
             gpa: 0
         })
-        const newEncStr = await encodeBase64Gzip(JSON.stringify(updatedData))
+        const newEncStr = await encodePayload(JSON.stringify(updatedData))
         setNewEncodedString((prev) => {
             return prev.split("data=")[0] + "data=" + newEncStr.replaceAll('/','_').replaceAll('+','-')
         })

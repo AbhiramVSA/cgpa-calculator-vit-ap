@@ -24,6 +24,7 @@ import {
   ExternalLink,
 } from "lucide-react"
 import { decodePayload, type Course as ImportedCourse } from "@/lib/decodePayload"
+import { encodePayload, isJSON } from "@/lib/encodePayload"
 import Link from "next/link"
 import { GradeDistribution } from "@/components/charts/grade-distribution"
 import { Suspense } from "react"
@@ -207,6 +208,10 @@ function CGPACalculatorContent() {
       if (toProcess.startsWith("http") && toProcess.includes("data=")){
           toProcess = decodeURIComponent(toProcess.split("data=")[1])
       }
+      if (isJSON(toProcess)){
+          const encJson = await encodePayload(toProcess)
+          toProcess = encJson === "INVALID_JSON" ?  toProcess : encJson
+      } 
       // Handle both normal and URI-encoded data
       toProcess = decodeURIComponent(toProcess)
       const decoded = decodePayload(toProcess) as StudentData
@@ -382,10 +387,10 @@ function CGPACalculatorContent() {
                 <Smartphone className="h-4 w-4" /> Open the app → Grades → Share grades → Paste below
               </div>
               <div className="space-y-2">
-                <Label htmlFor="encoded-data">Encoded Data</Label>
+                <Label htmlFor="encoded-data">URL or Encoded Data or JSON</Label>
                 <Textarea
                   id="encoded-data"
-                  placeholder="Paste your encoded academic data here..."
+                  placeholder="Paste your academic data here..."
                   value={encodedData}
                   onChange={(e) => setEncodedData(e.target.value)}
                   rows={5}
