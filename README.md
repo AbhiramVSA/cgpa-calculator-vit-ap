@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/cgpa-mark.svg" alt="Academic report card with a checked grade" width="112" />
+  <img src="assets/cgpa-calculator-logo.png" alt="Academic transcript, graduation cap, and calculator" width="200" />
 </p>
 
 <h1 align="center">VIT-AP CGPA Calculator</h1>
