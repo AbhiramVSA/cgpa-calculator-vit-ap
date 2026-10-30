@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Academic grade report</title>
+  <rect x="4" y="4" width="120" height="120" rx="30" fill="#20213b"/>
+  <path d="M38 24h40l17 17v54a9 9 0 0 1-9 9H38a9 9 0 0 1-9-9V33a9 9 0 0 1 9-9Z" fill="#313252" stroke="#a99aff" stroke-width="4"/>
+  <path d="M77 25v18h17M45 57h33M45 69h19" fill="none" stroke="#f6f0ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <circle cx="81" cy="82" r="15" fill="#75dfc2"/>
+  <path d="m74 82 5 5 9-10" fill="none" stroke="#20213b" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+</svg>
