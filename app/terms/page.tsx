@@ -6,7 +6,7 @@ export default function TermsPage() {
             <div className="prose prose-neutral dark:prose-invert max-w-none">
                 <p>This tool helps VIT-AP students calculate CGPA and visualize academic progress. By using this website, you agree to use it responsibly.</p>
                 <h3>Usage</h3>
-                <p>We provide manual entry and an option to decode an encoded string produced by the official app. We do not store your data server-side for the calculator; the /api/app endpoint renders an interactive report in-memory for your session only.</p>
+                <p>We provide manual entry and an option to decode an encoded string produced by the official app. We do not store your data server-side for the calculator; the report is decoded in your browser, and links from the app carry the data in the part of the URL that is never sent to the server.</p>
                 <h3>Disclaimer</h3>
                 <p>Results are best-effort based on the data you provide. This is not an official calculator of VIT-AP University.</p>
                 <h3>Contact</h3>

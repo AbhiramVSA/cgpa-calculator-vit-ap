@@ -24,6 +24,7 @@ import {
   ExternalLink,
 } from "lucide-react"
 import { decodePayload, type Course as ImportedCourse } from "@/lib/decodePayload"
+import { reportPath } from "@/lib/payloadFromUrl"
 import Link from "next/link"
 import { GradeDistribution } from "@/components/charts/grade-distribution"
 import { Suspense } from "react"
@@ -226,7 +227,7 @@ function CGPACalculatorContent() {
       setImportSuccess(true)
       setCourses([])
       setCgpa(null)
-      const reportUrl = `/report?data=${encodeURIComponent(toProcess)}`
+      const reportUrl = reportPath(toProcess)
       window.open(reportUrl, "_blank")
     } catch (error) {
       console.error("Decoding error:", error)
