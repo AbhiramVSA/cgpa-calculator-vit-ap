@@ -1,11 +1,14 @@
 import { ungzip } from "pako"
 
 export function decodePayload(encoded: string): unknown {
-  // base64url -> Buffer
+  // base64url -> bytes
   let b64 = encoded.replace(/-/g, "+").replace(/_/g, "/")
   const pad = b64.length % 4
   if (pad) b64 += "=".repeat(4 - pad)
-  const compressed = Buffer.from(b64, "base64")
+  // atob rather than Buffer: this runs in the browser, where Buffer only
+  // exists if a bundler happens to polyfill it.
+  const binary = atob(b64)
+  const compressed = Uint8Array.from(binary, (ch) => ch.charCodeAt(0))
 
   const jsonBuf = ungzip(compressed)
 

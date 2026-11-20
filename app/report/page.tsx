@@ -1,5 +1,9 @@
-import { redirect } from "next/navigation"
-import { decodePayload, isCourseArray, type Course as ImportedCourse } from "@/lib/decodePayload"
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { decodePayload, type Course as ImportedCourse } from "@/lib/decodePayload"
+import { payloadFromUrl, reportPath } from "@/lib/payloadFromUrl"
 import { InteractiveReport, type StudentData } from "@/components/report/InteractiveReport"
 
 function coerceStudentData(obj: any): StudentData {
@@ -18,17 +22,33 @@ function coerceStudentData(obj: any): StudentData {
     }
 }
 
-export default function ReportPage({ searchParams }: { searchParams?: Record<string, string | string[] | undefined> }) {
-    const dataParam = (searchParams?.data ?? searchParams?.payload) as string | undefined
-    if (!dataParam) {
-        redirect("/calculator")
-    }
-    let parsed: any
-    try {
-        parsed = decodePayload(dataParam!)
-    } catch (e) {
-        redirect(`/calculator?error=decode`)
-    }
-    const student = coerceStudentData(parsed)
+/**
+ * Decoded in the browser, not on the server: the payload is a student's full
+ * grade history, and a server component would receive it in the request and
+ * could log it. The app links here with `#data=...` so the server never sees it.
+ */
+export default function ReportPage() {
+    const router = useRouter()
+    const [student, setStudent] = useState<StudentData | null>(null)
+
+    useEffect(() => {
+        const { encoded, fromQuery } = payloadFromUrl(new URL(window.location.href))
+        if (!encoded) {
+            router.replace("/calculator")
+            return
+        }
+
+        // An old `?data=` link has already sent the payload once. Move it into
+        // the fragment so a reload or a shared link doesn't send it again.
+        if (fromQuery) window.history.replaceState(null, "", reportPath(encoded))
+
+        try {
+            setStudent(coerceStudentData(decodePayload(encoded)))
+        } catch {
+            router.replace("/calculator?error=decode")
+        }
+    }, [router])
+
+    if (!student) return <div className="min-h-screen bg-background" aria-busy="true" />
     return <InteractiveReport initial={student} />
 }
